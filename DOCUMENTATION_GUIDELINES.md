@@ -6,7 +6,7 @@
 
 ## General Conventions
 - **File naming**: `kebab-case` for files, `PascalCase` for React components, `camelCase` for utilities/functions.
-- **Indentation**: 2 spaces, no tabs.
+- **Indentation**: 4 spaces, no tabs.
 - **Line length**: ≤ 100 characters.
 - **Quotes**: Single quotes for strings (except JSON).
 - **Trailing commas**: Include in multiline objects/arrays.
