@@ -5,5 +5,5 @@ export async function POST() {
     const cookieStore = await cookies();
     cookieStore.delete('refreshToken');
 
-    return NextResponse.json({ ok: true }, { status: 204 });
+    return NextResponse.json({ ok: true }, { status: 200 });
 }
