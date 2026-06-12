@@ -1,39 +1,35 @@
-import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
-import { hashPassword } from '@/lib/auth';
+import { NextResponse } from 'next/server'
+import { prisma } from '@/lib/prisma'
+import { hashPassword } from '@/lib/auth'
+import { registerSchema } from '@/lib/validators/auth'
 
 export async function POST(req: Request) {
     try {
-        const body = await req.json();
-        const { email, password } = body || {};
-
-        if (!email || !password) {
-            return NextResponse.json({ error: { code: 'auth.required_fields' } }, { status: 400 });
-        }
-
-        if (password.length < 8) {
+        const parsed = registerSchema.safeParse(await req.json())
+        if (!parsed.success) {
             return NextResponse.json(
-                { error: { code: 'auth.password_too_short' } },
+                { error: { code: 'auth.invalid_fields', details: parsed.error.flatten } },
                 { status: 400 }
-            );
+            )
         }
+        const { email, password } = parsed.data
 
         const existingUser = await prisma.user.findUnique({
             where: { email: email.toLowerCase() },
-        });
+        })
 
         if (existingUser) {
-            return NextResponse.json({ error: { code: 'auth.email_in_use' } }, { status: 400 });
+            return NextResponse.json({ error: { code: 'auth.email_in_use' } }, { status: 400 })
         }
 
-        const hashed = await hashPassword(password);
+        const hashed = await hashPassword(password)
         const user = await prisma.user.create({
             data: { email: email.toLowerCase(), hashedPassword: hashed },
             select: { id: true, email: true },
-        });
+        })
 
-        return NextResponse.json({ ok: true, user }, { status: 201 });
+        return NextResponse.json({ ok: true, user }, { status: 201 })
     } catch (err) {
-        return NextResponse.json({ error: { code: 'server.error' } }, { status: 500 });
+        return NextResponse.json({ error: { code: 'server.error' } }, { status: 500 })
     }
 }

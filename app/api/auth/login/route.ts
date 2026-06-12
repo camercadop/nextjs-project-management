@@ -1,7 +1,14 @@
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { prisma } from '@/lib/prisma'
-import { verifyPassword, signAccessToken, signRefreshToken, DUMMY_PASSWORD_HASH } from '@/lib/auth'
+import {
+    verifyPassword,
+    signAccessToken,
+    signRefreshToken,
+    DUMMY_PASSWORD_HASH,
+    verifyOtp,
+} from '@/lib/auth'
+import { loginSchema } from '@/lib/validators/auth'
 
 /**
  * Parses the JWT refresh token expiration time from the environment variable
@@ -25,16 +32,25 @@ function parseMaxAgeSeconds(): number {
 
 export async function POST(req: Request) {
     try {
-        const body = await req.json()
-        const { email, password } = body || {}
-        if (!email || !password) {
+        const parsed = loginSchema.safeParse(await req.json())
+        if (!parsed.success) {
             return NextResponse.json(
                 { error: { code: 'auth.missing_credentials' } },
                 { status: 400 }
             )
         }
 
-        const user = await prisma.user.findUnique({ where: { email: email.toLowerCase() } })
+        const { email, password } = parsed.data
+        const user = await prisma.user.findUnique({
+            where: { email: email.toLowerCase() },
+            select: {
+                id: true,
+                email: true,
+                hashedPassword: true,
+                otpEnabled: true,
+                otpSecret: true,
+            },
+        })
         const hashToCheck = user ? user.hashedPassword : DUMMY_PASSWORD_HASH
 
         const valid = await verifyPassword(password, hashToCheck)
@@ -43,6 +59,13 @@ export async function POST(req: Request) {
                 { error: { code: 'auth.invalid_credentials' } },
                 { status: 401 }
             )
+        }
+
+        if (user.otpEnabled) {
+            const { otp } = parsed.data
+            if (!otp || !user.otpSecret || !verifyOtp(otp, user.otpSecret)) {
+                return NextResponse.json({ error: { code: 'auth.invalid_otp' } }, { status: 401 })
+            }
         }
 
         const payload = { userId: user.id, email: user.email }

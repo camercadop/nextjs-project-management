@@ -42,7 +42,7 @@ describe('POST /api/auth/login', () => {
         vi.mocked(prisma.user.findUnique).mockResolvedValue(null)
         vi.mocked(verifyPassword).mockResolvedValue(false)
 
-        const res = await POST(makeRequest({ email: 'nouser@email.com', password: 'pass' }))
+        const res = await POST(makeRequest({ email: 'nouser@email.com', password: 'password' }))
         expect(res.status).toBe(401)
     })
 
@@ -90,7 +90,7 @@ describe('parseMaxAgeSeconds (via cookie maxAge)', () => {
         vi.mocked(verifyPassword).mockResolvedValue(true)
     })
 
-    const REQUEST_BODY = { email: 'test@test.com', password: 'p' }
+    const REQUEST_BODY = { email: 'test@test.com', password: 'password' }
 
     it('defaults to 7d when env is unset', async () => {
         delete process.env.JWT_REFRESH_EXPIRES_IN

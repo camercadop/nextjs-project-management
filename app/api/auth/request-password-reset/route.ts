@@ -3,15 +3,17 @@ import crypto from 'crypto'
 import { prisma } from '@/lib/prisma'
 import { sendMail } from '@/lib/email'
 import { t } from '@/lib/i18n'
+import { requestPasswordResetSchema } from '@/lib/validators/auth'
 
 export async function POST(req: Request) {
     try {
-        const body = await req.json()
-        const { email } = body || {}
+        const parsedData = requestPasswordResetSchema.safeParse(await req.json())
 
-        if (!email) {
+        if (!parsedData.success) {
             return NextResponse.json({ error: { code: 'auth.email_required' } }, { status: 400 })
         }
+
+        const { email } = parsedData.data
 
         const user = await prisma.user.findUnique({ where: { email: email.toLowerCase() } })
         if (!user) {

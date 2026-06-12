@@ -26,18 +26,21 @@ describe('POST /api/auth/register', () => {
         const res = await POST(makeRequest({ email: '' }))
         expect(res.status).toBe(400)
         const json = await res.json()
-        expect(json.error.code).toBe('auth.required_fields')
+        expect(json.error.code).toBe('auth.invalid_fields')
     })
 
     it('should return 400 if password is shorter than 8 characters', async () => {
         const res = await POST(makeRequest({ email: 'a@b.com', password: 'short' }))
         expect(res.status).toBe(400)
         const json = await res.json()
-        expect(json.error.code).toBe('auth.password_too_short')
+        expect(json.error.code).toBe('auth.invalid_fields')
     })
 
     it('should return 400 if email is already in use', async () => {
-        vi.mocked(prisma.user.findUnique).mockResolvedValue({ id: '1', email: 'test@test.com' } as any)
+        vi.mocked(prisma.user.findUnique).mockResolvedValue({
+            id: '1',
+            email: 'test@test.com',
+        } as any)
 
         const res = await POST(makeRequest({ email: 'test@test.com', password: 'validpass1' }))
         expect(res.status).toBe(400)
