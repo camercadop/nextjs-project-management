@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { registerSchema } from '@/lib/validators/auth'
 import { useTranslation } from 'react-i18next'
 import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 
 type RegisterForm = z.infer<typeof registerSchema>
 
@@ -20,6 +21,7 @@ export default function RegisterPage() {
     })
     const { t } = useTranslation('auth')
     const router = useRouter()
+    const [error, setError] = useState<string | null>(null)
 
     const onSubmit = async (data: RegisterForm) => {
         const res = await fetch('/api/auth/register', {
@@ -29,6 +31,7 @@ export default function RegisterPage() {
         })
         const json = await res.json()
         if (json.ok) router.push('/login')
+        else setError(json.error.code || t('auth.register_error'))
     }
 
     return (
@@ -56,6 +59,12 @@ export default function RegisterPage() {
             >
                 {t('auth.register_button')}
             </button>
+            {error && (
+                <span className="text-red-500 text-sm text-center">
+                    <strong>{t('error_label')}: </strong>
+                    {error}
+                </span>
+            )}
             <Link href="/login" className="text-sm underline text-center">
                 {t('auth.link_login')}
             </Link>

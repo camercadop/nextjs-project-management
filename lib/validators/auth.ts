@@ -3,7 +3,7 @@ import { z } from 'zod'
 export const loginSchema = z.object({
     email: z.email(),
     password: z.string().min(6),
-    otp: z.string().length(6).optional(),
+    otp: z.string().length(6).optional().or(z.literal('')),
 })
 
 export const registerSchema = z.object({
