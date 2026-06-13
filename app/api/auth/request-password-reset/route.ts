@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import crypto from 'crypto'
 import { prisma } from '@/lib/prisma'
 import { sendMail } from '@/lib/email'
-import { t } from '@/lib/i18n'
+import { t } from '@/lib/i18n-server'
 import { requestPasswordResetSchema } from '@/lib/validators/auth'
 
 export async function POST(req: Request) {

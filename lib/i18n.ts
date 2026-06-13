@@ -1,46 +1,21 @@
 import i18n from 'i18next'
+import { initReactI18next } from 'react-i18next'
+import HttpBackend from 'i18next-http-backend'
 
-/* Inicialización única */
-async function bootstrap() {
-    if ((i18n as any).isInitialized) return
-    await i18n.init({
-        fallbackLng: process.env.NEXT_PUBLIC_DEFAULT_LOCALE || 'es',
-        ns: ['common'],
-        defaultNS: 'common',
-        interpolation: { escapeValue: false },
-    })
-}
-bootstrap().catch(() => {}) // fire-and-forget
+const defaultLocale = process.env.NEXT_PUBLIC_DEFAULT_LOCALE || 'es'
 
-type TOpts = { locale?: string; fallback?: string }
-
-function detectLocaleFromUrl(): string {
-    try {
-        if (typeof window !== 'undefined' && window.location?.href) {
-            const u = new URL(window.location.href)
-            const q = u.searchParams.get('lang')
-            if (q) return q.split('-')[0]
-        }
-    } catch {}
-    return process.env.NEXT_PUBLIC_DEFAULT_LOCALE || 'es'
+if (!i18n.isInitialized) {
+    i18n.use(HttpBackend)
+        .use(initReactI18next)
+        .init({
+            fallbackLng: defaultLocale,
+            supportedLngs: (process.env.NEXT_PUBLIC_SUPPORTED_LOCALES || 'es,en').split(','),
+            ns: ['common'],
+            defaultNS: 'common',
+            interpolation: { escapeValue: false },
+            backend: { loadPath: '/locales/{{lng}}/{{ns}}.json' },
+        })
 }
 
-export function t(key: string | string[], opts: TOpts = {}): string {
-    const keys = Array.isArray(key) ? key : [key]
-    const locale = opts.locale ?? detectLocaleFromUrl()
-    const fn = (i18n as any).isInitialized
-        ? locale
-            ? i18n.getFixedT(locale)
-            : i18n.t.bind(i18n)
-        : null
-
-    for (const k of keys) {
-        if (fn) {
-            const res = (fn as any)(k)
-            if (typeof res === 'string' && res !== k) return res
-        }
-    }
-    return opts.fallback ?? keys[0] ?? ''
-}
-
+export const t = i18n.t.bind(i18n)
 export { i18n }
