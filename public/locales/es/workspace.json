@@ -18,5 +18,7 @@
   "workspace.updated": "Workspace actualizado",
   "workspace.update_error": "Error al actualizar el workspace",
   "workspace.member_invited": "Miembro invitado exitosamente",
-  "workspace.invite_error": "Error al invitar miembro"
+  "workspace.invite_error": "Error al invitar miembro",
+  "workspace.projects_link": "Proyectos",
+  "workspace.settings_link": "Configuración"
 }

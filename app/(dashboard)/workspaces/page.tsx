@@ -44,18 +44,23 @@ export default function WorkspacesPage() {
             ) : (
                 <ul className="flex flex-col gap-2">
                     {workspaces.map(ws => (
-                        <li key={ws.id}>
-                            <Link
-                                href={`/workspaces/${ws.id}/settings`}
-                                className="block border rounded p-4 hover:bg-muted"
-                            >
+                        <li key={ws.id} className="border rounded p-4 flex justify-between items-center">
+                            <div>
                                 <p className="font-medium">{ws.name}</p>
                                 {ws.description && (
                                     <p className="text-sm text-muted-foreground">
                                         {ws.description}
                                     </p>
                                 )}
-                            </Link>
+                            </div>
+                            <div className="flex gap-3 text-sm">
+                                <Link href={`/workspaces/${ws.id}/projects`} className="text-primary hover:underline">
+                                    {t('workspace.projects_link')}
+                                </Link>
+                                <Link href={`/workspaces/${ws.id}/settings`} className="text-muted-foreground hover:underline">
+                                    {t('workspace.settings_link')}
+                                </Link>
+                            </div>
                         </li>
                     ))}
                 </ul>

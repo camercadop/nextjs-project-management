@@ -82,12 +82,20 @@ export default function ProjectsPage() {
                                     <p className="text-sm text-muted-foreground">{p.description}</p>
                                 )}
                             </Link>
-                            <button
-                                onClick={() => onArchive(p.id)}
-                                className="text-sm text-muted-foreground hover:text-foreground"
-                            >
-                                {tab === 'ACTIVE' ? t('project.archive_button') : t('project.unarchive_button')}
-                            </button>
+                            <div className="flex gap-3 items-center">
+                                <Link
+                                    href={`/projects/${p.id}/issues`}
+                                    className="text-sm text-muted-foreground hover:text-foreground"
+                                >
+                                    Issues
+                                </Link>
+                                <button
+                                    onClick={() => onArchive(p.id)}
+                                    className="text-sm text-muted-foreground hover:text-foreground"
+                                >
+                                    {tab === 'ACTIVE' ? t('project.archive_button') : t('project.unarchive_button')}
+                                </button>
+                            </div>
                         </li>
                     ))}
                 </ul>

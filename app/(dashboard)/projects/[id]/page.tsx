@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useParams } from 'next/navigation'
+import Link from 'next/link'
 import { useTranslation } from 'react-i18next'
 import { updateProjectSchema } from '@/lib/validators/project'
 import { Spinner } from '@/components/ui/spinner'
@@ -43,8 +44,14 @@ export default function ProjectDetailPage() {
     if (loading) return <Spinner />
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3 max-w-lg">
+        <div className="flex flex-col gap-3 max-w-lg">
+        <div className="flex justify-between items-center">
             <h1 className="text-2xl font-bold">{t('project.detail_title')}</h1>
+            <Link href={`/projects/${id}/issues`} className="text-sm text-primary hover:underline">
+                Issues →
+            </Link>
+        </div>
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
             <input
                 {...register('name')}
                 placeholder={t('project.name_placeholder')}
@@ -60,5 +67,6 @@ export default function ProjectDetailPage() {
                 {t('project.save_button')}
             </button>
         </form>
+        </div>
     )
 }
