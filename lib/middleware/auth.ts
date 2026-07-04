@@ -3,6 +3,7 @@ import { verifyAccessToken } from '@/lib/auth'
 import { cookies } from 'next/headers'
 import type { TokenPayload } from '@/lib/types/auth'
 
+/** Returns a JSON error response with the given code and HTTP status. */
 function jsonError(code: string, status: number = 401) {
     return new Response(JSON.stringify({ error: { code } }), {
         status,
@@ -10,10 +11,12 @@ function jsonError(code: string, status: number = 401) {
     })
 }
 
+/** Extracts and verifies the access token from the request, returning the authenticated user or an error response. */
 export async function authMiddleware(req: Request) {
     const authHeader = req.headers.get('Authorization')
     let token: string | undefined
 
+    // Prefer Authorization header (API clients), fall back to httpOnly cookie (browser sessions)
     if (authHeader && authHeader.startsWith('Bearer ')) {
         token = authHeader.slice(7).trim()
     } else {
@@ -29,6 +32,7 @@ export async function authMiddleware(req: Request) {
     try {
         payload = verifyAccessToken(token) as unknown as TokenPayload
     } catch {
+        // Throw instead of return so callers can distinguish auth failures from normal error responses
         throw jsonError('auth.unauthorized')
     }
 
