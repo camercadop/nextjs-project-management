@@ -5,7 +5,9 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useParams, useRouter } from 'next/navigation'
 import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
 import { createProjectSchema } from '@/lib/validators/project'
+import { fetchAuth } from '@/lib/fetch-auth'
 
 type FormData = z.infer<typeof createProjectSchema>
 
@@ -18,12 +20,17 @@ export default function NewProjectPage() {
     })
 
     const onSubmit = async (data: FormData) => {
-        const res = await fetch(`/api/workspaces/${id}/projects`, {
+        const res = await fetchAuth(`/api/workspaces/${id}/projects`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data),
         })
-        if (res.ok) router.push(`/workspaces/${id}/projects`)
+        if (res.ok) {
+            toast.success(t('project.created'))
+            router.push(`/workspaces/${id}/projects`)
+        } else {
+            toast.error(t('project.create_error'))
+        }
     }
 
     return (

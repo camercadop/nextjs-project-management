@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { requestPasswordResetSchema } from '@/lib/validators/auth'
 import { useTranslation } from 'react-i18next'
 import { useState } from 'react'
+import { toast } from 'sonner'
 
 type ForgotForm = z.infer<typeof requestPasswordResetSchema>
 
@@ -28,6 +29,7 @@ export default function ForgotPasswordPage() {
             body: JSON.stringify(data),
         })
         setSent(true)
+        toast.success(t('auth.reset_email_sent'))
     }
 
     if (sent) {

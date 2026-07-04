@@ -8,6 +8,8 @@ import { useParams } from 'next/navigation'
 import { useTranslation } from 'react-i18next'
 import { updateWorkspaceSchema, inviteMemberSchema } from '@/lib/validators/workspace'
 import { Spinner } from '@/components/ui/spinner'
+import { toast } from 'sonner'
+import { fetchAuth } from '@/lib/fetch-auth'
 
 type UpdateForm = z.infer<typeof updateWorkspaceSchema>
 type InviteForm = z.output<typeof inviteMemberSchema>
@@ -28,7 +30,7 @@ export default function WorkspaceSettingsPage() {
     const inviteForm = useForm<InviteForm>({ resolver: zodResolver(inviteMemberSchema) })
 
     useEffect(() => {
-        fetch(`/api/workspaces/${id}`)
+        fetchAuth(`/api/workspaces/${id}`)
             .then(res => res.json())
             .then(data => {
                 if (data.ok) {
@@ -43,28 +45,33 @@ export default function WorkspaceSettingsPage() {
     }, [id])
 
     const onUpdate = async (data: UpdateForm) => {
-        await fetch(`/api/workspaces/${id}`, {
+        const res = await fetchAuth(`/api/workspaces/${id}`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data),
         })
+        if (res.ok) toast.success(t('workspace.updated'))
+        else toast.error(t('workspace.update_error'))
     }
 
     const onInvite = async (data: InviteForm) => {
-        const res = await fetch(`/api/workspaces/${id}/members`, {
+        const res = await fetchAuth(`/api/workspaces/${id}/members`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data),
         })
         if (res.ok) {
+            toast.success(t('workspace.member_invited'))
             inviteForm.reset()
-            const updated = await fetch(`/api/workspaces/${id}/members`).then(r => r.json())
+            const updated = await fetchAuth(`/api/workspaces/${id}/members`).then(r => r.json())
             if (updated.ok) setMembers(updated.members)
+        } else {
+            toast.error(t('workspace.invite_error'))
         }
     }
 
     const onRemove = async (userId: string) => {
-        const res = await fetch(`/api/workspaces/${id}/members/${userId}`, { method: 'DELETE' })
+        const res = await fetchAuth(`/api/workspaces/${id}/members/${userId}`, { method: 'DELETE' })
         if (res.ok) setMembers(prev => prev.filter(m => m.user.id !== userId))
     }
 
@@ -90,7 +97,7 @@ export default function WorkspaceSettingsPage() {
                     type="submit"
                     className="bg-primary text-primary-foreground rounded px-3 py-2"
                 >
-                    {t('workspace.create_button')}
+                    {t('workspace.save_button')}
                 </button>
             </form>
 

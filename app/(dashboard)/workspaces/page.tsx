@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useTranslation } from 'react-i18next'
 import { Spinner } from '@/components/ui/spinner'
+import { fetchAuth } from '@/lib/fetch-auth'
 
 interface Workspace {
     id: string
@@ -17,7 +18,7 @@ export default function WorkspacesPage() {
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        fetch('/api/workspaces')
+        fetchAuth('/api/workspaces')
             .then(res => res.json())
             .then(data => {
                 if (data.ok) setWorkspaces(data.workspaces)

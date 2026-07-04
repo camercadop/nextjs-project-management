@@ -4,6 +4,7 @@
   "workspace.name_placeholder": "Nombre del workspace",
   "workspace.description_placeholder": "Descripción (opcional)",
   "workspace.create_button": "Crear",
+  "workspace.save_button": "Guardar",
   "workspace.empty": "No tienes workspaces aún.",
   "workspace.settings_title": "Configuración",
   "workspace.members_title": "Miembros",
@@ -11,5 +12,11 @@
   "workspace.invite_button": "Invitar",
   "workspace.remove_button": "Eliminar",
   "workspace.role_owner": "Propietario",
-  "workspace.role_member": "Miembro"
+  "workspace.role_member": "Miembro",
+  "workspace.created": "Workspace creado exitosamente",
+  "workspace.create_error": "Error al crear el workspace",
+  "workspace.updated": "Workspace actualizado",
+  "workspace.update_error": "Error al actualizar el workspace",
+  "workspace.member_invited": "Miembro invitado exitosamente",
+  "workspace.invite_error": "Error al invitar miembro"
 }

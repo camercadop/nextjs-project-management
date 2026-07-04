@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { loginSchema } from '@/lib/validators/auth'
 import { useTranslation } from 'react-i18next'
 import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 
 type LoginForm = z.infer<typeof loginSchema>
 
@@ -28,7 +29,12 @@ export default function LoginPage() {
             body: JSON.stringify(data),
         })
         const json = await res.json()
-        if (json.ok) router.push('/dashboard')
+        if (json.ok) {
+            toast.success(t('auth.login_success'))
+            router.push('/dashboard')
+        } else {
+            toast.error(json.error?.code || t('auth.login_error'))
+        }
     }
 
     return (

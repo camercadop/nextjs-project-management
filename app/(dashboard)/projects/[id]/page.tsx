@@ -8,6 +8,8 @@ import { useParams } from 'next/navigation'
 import { useTranslation } from 'react-i18next'
 import { updateProjectSchema } from '@/lib/validators/project'
 import { Spinner } from '@/components/ui/spinner'
+import { toast } from 'sonner'
+import { fetchAuth } from '@/lib/fetch-auth'
 
 type FormData = z.infer<typeof updateProjectSchema>
 
@@ -20,7 +22,7 @@ export default function ProjectDetailPage() {
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        fetch(`/api/projects/${id}`)
+        fetchAuth(`/api/projects/${id}`)
             .then(res => res.json())
             .then(data => {
                 if (data.ok) reset({ name: data.project.name, description: data.project.description ?? '' })
@@ -29,11 +31,13 @@ export default function ProjectDetailPage() {
     }, [id])
 
     const onSubmit = async (data: FormData) => {
-        await fetch(`/api/projects/${id}`, {
+        const res = await fetchAuth(`/api/projects/${id}`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data),
         })
+        if (res.ok) toast.success(t('project.updated'))
+        else toast.error(t('project.update_error'))
     }
 
     if (loading) return <Spinner />

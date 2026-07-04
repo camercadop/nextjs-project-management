@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { ThemeProvider } from '@/components/theme-provider'
+import { Toaster } from '@/components/ui/sonner'
 import './globals.css'
 import { I18nProvider } from '@/components/i18n-provider'
 
@@ -32,7 +33,10 @@ export default function RootLayout({
         >
             <body className="min-h-full flex flex-col">
                 <I18nProvider>
-                    <ThemeProvider>{children}</ThemeProvider>
+                    <ThemeProvider>
+                        {children}
+                        <Toaster />
+                    </ThemeProvider>
                 </I18nProvider>
             </body>
         </html>

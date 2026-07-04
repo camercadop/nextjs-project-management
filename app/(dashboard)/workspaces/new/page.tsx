@@ -5,7 +5,9 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useRouter } from 'next/navigation'
 import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
 import { createWorkspaceSchema } from '@/lib/validators/workspace'
+import { fetchAuth } from '@/lib/fetch-auth'
 
 type FormData = z.infer<typeof createWorkspaceSchema>
 
@@ -19,13 +21,18 @@ export default function NewWorkspacePage() {
     } = useForm<FormData>({ resolver: zodResolver(createWorkspaceSchema) })
 
     const onSubmit = async (data: FormData) => {
-        const res = await fetch('/api/workspaces', {
+        const res = await fetchAuth('/api/workspaces', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data),
         })
         const json = await res.json()
-        if (json.ok) router.push('/workspaces')
+        if (json.ok) {
+            toast.success(t('workspace.created'))
+            router.push('/workspaces')
+        } else {
+            toast.error(json.error?.code || t('workspace.create_error'))
+        }
     }
 
     return (

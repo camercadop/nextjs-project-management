@@ -1,0 +1,20 @@
+{
+  "project.title": "Proyectos",
+  "project.create_title": "Crear proyecto",
+  "project.detail_title": "Detalle del proyecto",
+  "project.name_placeholder": "Nombre del proyecto",
+  "project.description_placeholder": "Descripción (opcional)",
+  "project.create_button": "Crear",
+  "project.save_button": "Guardar",
+  "project.tab_active": "Activos",
+  "project.tab_archived": "Archivados",
+  "project.archive_button": "Archivar",
+  "project.unarchive_button": "Desarchivar",
+  "project.empty": "No hay proyectos aún.",
+  "project.created": "Proyecto creado exitosamente",
+  "project.create_error": "Error al crear el proyecto",
+  "project.updated": "Proyecto actualizado",
+  "project.update_error": "Error al actualizar el proyecto",
+  "project.archived": "Proyecto archivado",
+  "project.archive_error": "Error al archivar el proyecto"
+}

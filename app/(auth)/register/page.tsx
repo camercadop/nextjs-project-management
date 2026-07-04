@@ -8,6 +8,7 @@ import { registerSchema } from '@/lib/validators/auth'
 import { useTranslation } from 'react-i18next'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { toast } from 'sonner'
 
 type RegisterForm = z.infer<typeof registerSchema>
 
@@ -30,8 +31,14 @@ export default function RegisterPage() {
             body: JSON.stringify(data),
         })
         const json = await res.json()
-        if (json.ok) router.push('/login')
-        else setError(json.error.code || t('auth.register_error'))
+        if (json.ok) {
+            toast.success(t('auth.register_success'))
+            router.push('/login')
+        } else {
+            const msg = json.error.code || t('auth.register_error')
+            setError(msg)
+            toast.error(msg)
+        }
     }
 
     return (

@@ -5,6 +5,8 @@ import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import { useTranslation } from 'react-i18next'
 import { Spinner } from '@/components/ui/spinner'
+import { toast } from 'sonner'
+import { fetchAuth } from '@/lib/fetch-auth'
 
 interface Project {
     id: string
@@ -22,7 +24,7 @@ export default function ProjectsPage() {
 
     useEffect(() => {
         let stale = false
-        fetch(`/api/workspaces/${id}/projects?status=${tab}`)
+        fetchAuth(`/api/workspaces/${id}/projects?status=${tab}`)
             .then(res => res.json())
             .then(data => { if (!stale && data.ok) setProjects(data.projects) })
             .finally(() => { if (!stale) setLoading(false) })
@@ -30,8 +32,13 @@ export default function ProjectsPage() {
     }, [id, tab])
 
     const onArchive = async (projectId: string) => {
-        const res = await fetch(`/api/projects/${projectId}/archive`, { method: 'PATCH' })
-        if (res.ok) setProjects(prev => prev.filter(p => p.id !== projectId))
+        const res = await fetchAuth(`/api/projects/${projectId}/archive`, { method: 'PATCH' })
+        if (res.ok) {
+            toast.success(t('project.archived'))
+            setProjects(prev => prev.filter(p => p.id !== projectId))
+        } else {
+            toast.error(t('project.archive_error'))
+        }
     }
 
     return (
