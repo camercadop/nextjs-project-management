@@ -6,7 +6,7 @@ Plataforma SaaS de gestión de proyectos orientada a equipos pequeños y mediano
 
 - **Framework:** Next.js 16 (App Router)
 - **Language:** TypeScript
-- **Database:** SQLite via Prisma ORM
+- **Database:** PostgreSQL via Prisma ORM
 - **Auth:** JWT (access + refresh tokens) + bcrypt + OTP (2FA via otplib)
 - **Email:** Nodemailer (Gmail)
 - **i18n:** i18next
@@ -19,7 +19,11 @@ Plataforma SaaS de gestión de proyectos orientada a equipos pequeños y mediano
 - Protección contra timing attacks en login
 - Soporte para 2FA/OTP
 - Recuperación de contraseña por email
+- Workspaces con roles (OWNER / MEMBER)
+- Proyectos con estados (ACTIVE / ARCHIVED)
 - Internacionalización (es/en)
+- Validación con Zod
+- UI con shadcn/ui + dark mode
 - Tests de integración automatizados
 
 ## Getting Started
@@ -28,6 +32,7 @@ Plataforma SaaS de gestión de proyectos orientada a equipos pequeños y mediano
 
 - Node.js 20+
 - npm
+- PostgreSQL
 
 ### Installation
 
@@ -47,7 +52,7 @@ Copia `.env` y configura según sea necesario:
 | `JWT_REFRESH_SECRET` | Secreto para firmar refresh tokens |
 | `JWT_ACCESS_EXPIRES_IN` | Expiración del access token (ej: `15m`) |
 | `JWT_REFRESH_EXPIRES_IN` | Expiración del refresh token (ej: `3d`) |
-| `DATABASE_URL` | Connection string de SQLite |
+| `DATABASE_URL` | Connection string de PostgreSQL (ej: `postgresql://user:pass@localhost:5432/db`) |
 | `GMAIL_USER` | Cuenta Gmail para envío de correos |
 | `GMAIL_PASS` | App password de Gmail |
 | `NEXT_PUBLIC_DEFAULT_LOCALE` | Idioma por defecto (`es`) |
@@ -69,19 +74,25 @@ npm test
 
 ```
 app/
-  api/auth/       → Route handlers de autenticación
+  (auth)/             → Páginas de autenticación (login, register, forgot-password)
+  (dashboard)/        → Páginas protegidas (workspaces, projects)
+  api/
+    auth/             → Route handlers de autenticación
+    workspaces/       → CRUD de workspaces y miembros
+    projects/         → CRUD de proyectos
 lib/
-  middleware/     → Auth middleware (verificación de token)
-  types/          → Tipos TypeScript (auth)
-  auth.ts         → Utilidades de password, JWT y OTP
-  email.ts        → Transporte de email (Nodemailer)
-  i18n.ts         → Configuración de internacionalización
-  prisma.ts       → Cliente Prisma
+  middleware/         → Auth y workspace middleware
+  validators/         → Schemas Zod (auth, workspace, project)
+  types/              → Tipos TypeScript
+  auth.ts             → Utilidades de password, JWT y OTP
+  email.ts            → Transporte de email (Nodemailer)
+  i18n.ts             → Configuración de internacionalización
+  prisma.ts           → Cliente Prisma
 prisma/
-  schema.prisma   → Schema de base de datos
-  migrations/     → Migraciones
+  schema.prisma       → Schema de base de datos
+  migrations/         → Migraciones
 tests/
-  integration/    → Tests de integración
+  integration/        → Tests de integración
 ```
 
 ## Scripts
