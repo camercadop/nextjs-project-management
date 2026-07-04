@@ -4,6 +4,14 @@ import { authMiddleware } from '@/lib/middleware/auth'
 import { getWorkspaceMember } from '@/lib/middleware/workspace'
 import { updateProjectSchema } from '@/lib/validators/project'
 
+/**
+ * Retrieves a project by ID if the user is a member of its workspace.
+ *
+ * @param userId - The authenticated user's ID.
+ * @param projectId - The project ID to look up.
+ *
+ * @returns The project if found and accessible, or null otherwise.
+ */
 async function getProjectWithAccess(userId: string, projectId: string) {
     const project = await prisma.project.findUnique({ where: { id: projectId } })
     if (!project) return null
