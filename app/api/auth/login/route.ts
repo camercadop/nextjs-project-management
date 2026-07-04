@@ -76,6 +76,15 @@ export async function POST(req: Request) {
 
         const cookieStore = await cookies()
         cookieStore.set({
+            name: 'accessToken',
+            value: accessToken,
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            path: '/',
+            maxAge: 15 * 60, // 15 minutes — matches JWT_ACCESS_EXPIRES_IN
+        })
+        cookieStore.set({
             name: 'refreshToken',
             value: refreshToken,
             httpOnly: true,
