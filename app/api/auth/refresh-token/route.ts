@@ -33,6 +33,17 @@ export async function POST() {
         }
 
         const newAccessToken = await signAccessToken({ userId: user.id, email: user.email })
+
+        cookieStore.set({
+            name: 'accessToken',
+            value: newAccessToken,
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            path: '/',
+            maxAge: 15 * 60,
+        })
+
         return NextResponse.json({ accessToken: newAccessToken }, { status: 200 })
     } catch (err) {
         return NextResponse.json({ error: { code: 'server.error' } }, { status: 500 })

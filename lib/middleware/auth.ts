@@ -13,6 +13,8 @@ function jsonError(code: string, status: number = 401) {
 
 /** Extracts and verifies the access token from the request, returning the authenticated user or an error response. */
 export async function authMiddleware(req: Request) {
+    const method = req.method
+    const url = req.url
     const authHeader = req.headers.get('Authorization')
     let token: string | undefined
 
@@ -25,6 +27,7 @@ export async function authMiddleware(req: Request) {
     }
 
     if (!token) {
+        console.warn(`[auth] ${method} ${url} - No token provided`)
         return jsonError('auth.token_required')
     }
 
@@ -32,7 +35,7 @@ export async function authMiddleware(req: Request) {
     try {
         payload = verifyAccessToken(token) as unknown as TokenPayload
     } catch {
-        // Throw instead of return so callers can distinguish auth failures from normal error responses
+        console.warn(`[auth] ${method} ${url} - Invalid token`)
         throw jsonError('auth.unauthorized')
     }
 
@@ -42,8 +45,10 @@ export async function authMiddleware(req: Request) {
     })
 
     if (!user) {
+        console.warn(`[auth] ${method} ${url} - User not found (id: ${payload.userId})`)
         return jsonError('auth.user_not_found')
     }
 
+    console.info(`[auth] ${method} ${url} - Authenticated user ${user.id}`)
     return { user, payload }
 }
