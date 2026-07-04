@@ -32,6 +32,7 @@ model Workspace {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   members       WorkspaceMember[]
+  projects      Project[]
 }
 
 model WorkspaceMember {
@@ -44,4 +45,15 @@ model WorkspaceMember {
   workspace     Workspace @relation(fields:[workspaceId], references: [id], onDelete: Cascade)
 
   @@unique([userId, workspaceId])
+}
+
+model Project {
+  id            String   @id @default(uuid())
+  name          String
+  description   String?
+  status        String   @default("ACTIVE") // ACTIVE | ARCHIVED
+  workspaceId   String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  workspace     Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 }
