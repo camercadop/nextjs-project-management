@@ -9,6 +9,10 @@ import { Breadcrumb } from '@/components/ui/breadcrumb'
 import { useWorkspace } from '@/components/workspace-context'
 import { toast } from 'sonner'
 import { fetchAuth } from '@/lib/fetch-auth'
+import { Card, CardContent } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Plus, Archive, ArchiveRestore, Bug } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 interface Project {
     id: string
@@ -45,67 +49,75 @@ export default function ProjectsPage() {
     }
 
     return (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-6">
             <Breadcrumb items={[
                 { label: workspaceName || '...', href: `/workspaces/${id}/projects` },
                 { label: t('project.breadcrumb_projects', 'Projects') },
             ]} />
             <div className="flex justify-between items-center">
-                <h1 className="text-2xl font-bold">{t('project.title')}</h1>
-                <Link
-                    href={`/workspaces/${id}/projects/new`}
-                    className="bg-primary text-primary-foreground rounded px-4 py-2"
-                >
-                    {t('project.create_button')}
-                </Link>
+                <h1 className="text-2xl font-bold tracking-tight">{t('project.title')}</h1>
+                <Button asChild>
+                    <Link href={`/workspaces/${id}/projects/new`}>
+                        <Plus className="size-4" />
+                        {t('project.create_button')}
+                    </Link>
+                </Button>
             </div>
 
-            <div className="flex gap-2">
-                <button
-                    onClick={() => { setTab('ACTIVE'); setLoading(true) }}
-                    className={`px-3 py-1 rounded ${tab === 'ACTIVE' ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}
-                >
-                    {t('project.tab_active')}
-                </button>
-                <button
-                    onClick={() => { setTab('ARCHIVED'); setLoading(true) }}
-                    className={`px-3 py-1 rounded ${tab === 'ARCHIVED' ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}
-                >
-                    {t('project.tab_archived')}
-                </button>
+            <div className="flex gap-1 rounded-lg bg-muted p-1 w-fit">
+                {(['ACTIVE', 'ARCHIVED'] as const).map(value => (
+                    <button
+                        key={value}
+                        onClick={() => { setTab(value); setLoading(true) }}
+                        className={cn(
+                            'rounded-md px-3 py-1.5 text-sm font-medium transition-colors',
+                            tab === value
+                                ? 'bg-background text-foreground shadow-sm'
+                                : 'text-muted-foreground hover:text-foreground'
+                        )}
+                    >
+                        {value === 'ACTIVE' ? t('project.tab_active') : t('project.tab_archived')}
+                    </button>
+                ))}
             </div>
 
             {loading ? (
                 <Spinner />
             ) : projects.length === 0 ? (
-                <p className="text-muted-foreground">{t('project.empty')}</p>
+                <Card>
+                    <CardContent className="py-12 text-center text-muted-foreground">
+                        {t('project.empty')}
+                    </CardContent>
+                </Card>
             ) : (
-                <ul className="flex flex-col gap-2">
+                <div className="grid gap-3">
                     {projects.map(p => (
-                        <li key={p.id} className="flex justify-between items-center border rounded p-4">
-                            <Link href={`/workspaces/${id}/projects/${p.id}`} className="hover:underline">
-                                <p className="font-medium">{p.name}</p>
-                                {p.description && (
-                                    <p className="text-sm text-muted-foreground">{p.description}</p>
-                                )}
-                            </Link>
-                            <div className="flex gap-3 items-center">
-                                <Link
-                                    href={`/workspaces/${id}/projects/${p.id}/issues`}
-                                    className="text-sm text-muted-foreground hover:text-foreground"
-                                >
-                                    Issues
+                        <Card key={p.id}>
+                            <CardContent className="flex justify-between items-center py-4">
+                                <Link href={`/workspaces/${id}/projects/${p.id}`} className="hover:underline">
+                                    <p className="font-medium">{p.name}</p>
+                                    {p.description && (
+                                        <p className="text-sm text-muted-foreground mt-0.5">{p.description}</p>
+                                    )}
                                 </Link>
-                                <button
-                                    onClick={() => onArchive(p.id)}
-                                    className="text-sm text-muted-foreground hover:text-foreground"
-                                >
-                                    {tab === 'ACTIVE' ? t('project.archive_button') : t('project.unarchive_button')}
-                                </button>
-                            </div>
-                        </li>
+                                <div className="flex gap-1">
+                                    <Button variant="ghost" size="sm" asChild>
+                                        <Link href={`/workspaces/${id}/projects/${p.id}/issues`}>
+                                            <Bug className="size-4" />
+                                            Issues
+                                        </Link>
+                                    </Button>
+                                    <Button variant="ghost" size="sm" onClick={() => onArchive(p.id)}>
+                                        {tab === 'ACTIVE'
+                                            ? <><Archive className="size-4" />{t('project.archive_button')}</>
+                                            : <><ArchiveRestore className="size-4" />{t('project.unarchive_button')}</>
+                                        }
+                                    </Button>
+                                </div>
+                            </CardContent>
+                        </Card>
                     ))}
-                </ul>
+                </div>
             )}
         </div>
     )

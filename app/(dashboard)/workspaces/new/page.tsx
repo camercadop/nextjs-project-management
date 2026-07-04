@@ -8,6 +8,11 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { createWorkspaceSchema } from '@/lib/validators/workspace'
 import { fetchAuth } from '@/lib/fetch-auth'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
 
 type FormData = z.infer<typeof createWorkspaceSchema>
 
@@ -36,27 +41,28 @@ export default function NewWorkspacePage() {
     }
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 max-w-md">
-            <h1 className="text-2xl font-bold">{t('workspace.create_title')}</h1>
-            <input
-                {...register('name')}
-                placeholder={t('workspace.name_placeholder')}
-                className="border rounded px-3 py-2"
-            />
-            {errors.name && <span className="text-red-500 text-sm">{errors.name.message}</span>}
-            <textarea
-                {...register('description')}
-                placeholder={t('workspace.description_placeholder')}
-                className="border rounded px-3 py-2"
-                rows={3}
-            />
-            <button
-                type="submit"
-                disabled={isSubmitting}
-                className="bg-primary text-primary-foreground rounded px-3 py-2"
-            >
-                {t('workspace.create_button')}
-            </button>
-        </form>
+        <div className="max-w-md">
+            <Card>
+                <CardHeader>
+                    <CardTitle>{t('workspace.create_title')}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+                        <div className="flex flex-col gap-1.5">
+                            <Label htmlFor="name">{t('workspace.name_placeholder', 'Name')}</Label>
+                            <Input id="name" {...register('name')} placeholder={t('workspace.name_placeholder')} />
+                            {errors.name && <span className="text-destructive text-xs">{errors.name.message}</span>}
+                        </div>
+                        <div className="flex flex-col gap-1.5">
+                            <Label htmlFor="description">{t('workspace.description_placeholder', 'Description')}</Label>
+                            <Textarea id="description" {...register('description')} placeholder={t('workspace.description_placeholder')} rows={3} />
+                        </div>
+                        <Button type="submit" disabled={isSubmitting} className="mt-2">
+                            {t('workspace.create_button')}
+                        </Button>
+                    </form>
+                </CardContent>
+            </Card>
+        </div>
     )
 }

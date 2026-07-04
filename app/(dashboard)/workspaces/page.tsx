@@ -5,6 +5,9 @@ import Link from 'next/link'
 import { useTranslation } from 'react-i18next'
 import { Spinner } from '@/components/ui/spinner'
 import { fetchAuth } from '@/lib/fetch-auth'
+import { Card, CardContent } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Plus, FolderKanban, Settings } from 'lucide-react'
 
 interface Workspace {
     id: string
@@ -27,43 +30,52 @@ export default function WorkspacesPage() {
     }, [])
 
     return (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-6">
             <div className="flex justify-between items-center">
-                <h1 className="text-2xl font-bold">{t('workspace.title')}</h1>
-                <Link
-                    href="/workspaces/new"
-                    className="bg-primary text-primary-foreground rounded px-4 py-2"
-                >
-                    {t('workspace.create_button')}
-                </Link>
+                <h1 className="text-2xl font-bold tracking-tight">{t('workspace.title')}</h1>
+                <Button asChild>
+                    <Link href="/workspaces/new">
+                        <Plus className="size-4" />
+                        {t('workspace.create_button')}
+                    </Link>
+                </Button>
             </div>
             {loading ? (
                 <Spinner />
             ) : workspaces.length === 0 ? (
-                <p className="text-muted-foreground">{t('workspace.empty')}</p>
+                <Card>
+                    <CardContent className="py-12 text-center text-muted-foreground">
+                        {t('workspace.empty')}
+                    </CardContent>
+                </Card>
             ) : (
-                <ul className="flex flex-col gap-2">
+                <div className="grid gap-3">
                     {workspaces.map(ws => (
-                        <li key={ws.id} className="border rounded p-4 flex justify-between items-center">
-                            <div>
-                                <p className="font-medium">{ws.name}</p>
-                                {ws.description && (
-                                    <p className="text-sm text-muted-foreground">
-                                        {ws.description}
-                                    </p>
-                                )}
-                            </div>
-                            <div className="flex gap-3 text-sm">
-                                <Link href={`/workspaces/${ws.id}/projects`} className="text-primary hover:underline">
-                                    {t('workspace.projects_link')}
-                                </Link>
-                                <Link href={`/workspaces/${ws.id}/settings`} className="text-muted-foreground hover:underline">
-                                    {t('workspace.settings_link')}
-                                </Link>
-                            </div>
-                        </li>
+                        <Card key={ws.id}>
+                            <CardContent className="flex justify-between items-center py-4">
+                                <div>
+                                    <p className="font-medium">{ws.name}</p>
+                                    {ws.description && (
+                                        <p className="text-sm text-muted-foreground mt-0.5">{ws.description}</p>
+                                    )}
+                                </div>
+                                <div className="flex gap-1">
+                                    <Button variant="ghost" size="sm" asChild>
+                                        <Link href={`/workspaces/${ws.id}/projects`}>
+                                            <FolderKanban className="size-4" />
+                                            {t('workspace.projects_link')}
+                                        </Link>
+                                    </Button>
+                                    <Button variant="ghost" size="sm" asChild>
+                                        <Link href={`/workspaces/${ws.id}/settings`}>
+                                            <Settings className="size-4" />
+                                        </Link>
+                                    </Button>
+                                </div>
+                            </CardContent>
+                        </Card>
                     ))}
-                </ul>
+                </div>
             )}
         </div>
     )

@@ -13,6 +13,14 @@ import { Breadcrumb } from '@/components/ui/breadcrumb'
 import { useWorkspace } from '@/components/workspace-context'
 import { toast } from 'sonner'
 import { fetchAuth } from '@/lib/fetch-auth'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
+import { Select } from '@/components/ui/select'
+import { Separator } from '@/components/ui/separator'
+import { cn } from '@/lib/utils'
 
 type CreateForm = z.infer<typeof createIssueSchema>
 
@@ -22,6 +30,13 @@ interface Issue {
     status: string
     priority: string
     assignee: { id: string; email: string } | null
+}
+
+const priorityColor: Record<string, string> = {
+    LOW: 'bg-muted text-muted-foreground',
+    MEDIUM: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
+    HIGH: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400',
+    CRITICAL: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
 }
 
 export default function ProjectIssuesPage() {
@@ -84,86 +99,88 @@ export default function ProjectIssuesPage() {
                 { label: 'Issues' },
             ]} />
 
-            <h1 className="text-2xl font-bold">{t('issue.title')}</h1>
+            <h1 className="text-2xl font-bold tracking-tight">{t('issue.title')}</h1>
 
-            {/* Filters */}
             <div className="flex gap-2">
-                <select
-                    value={filterStatus}
-                    onChange={e => setFilterStatus(e.target.value)}
-                    className="border rounded px-2 py-1 text-sm"
-                >
+                <Select value={filterStatus} onChange={e => setFilterStatus(e.target.value)}>
                     <option value="">{t('issue.status')}: All</option>
                     <option value="BACKLOG">Backlog</option>
                     <option value="TODO">Todo</option>
                     <option value="IN_PROGRESS">In Progress</option>
                     <option value="DONE">Done</option>
-                </select>
-                <select
-                    value={filterPriority}
-                    onChange={e => setFilterPriority(e.target.value)}
-                    className="border rounded px-2 py-1 text-sm"
-                >
+                </Select>
+                <Select value={filterPriority} onChange={e => setFilterPriority(e.target.value)}>
                     <option value="">{t('issue.priority')}: All</option>
                     <option value="LOW">Low</option>
                     <option value="MEDIUM">Medium</option>
                     <option value="HIGH">High</option>
                     <option value="CRITICAL">Critical</option>
-                </select>
+                </Select>
             </div>
 
-            {/* Issue list */}
             {issues.length === 0 ? (
-                <p className="text-muted-foreground">{t('issue.empty')}</p>
+                <Card>
+                    <CardContent className="py-12 text-center text-muted-foreground">
+                        {t('issue.empty')}
+                    </CardContent>
+                </Card>
             ) : (
-                <ul className="flex flex-col gap-2">
+                <div className="grid gap-2">
                     {issues.map(issue => (
-                        <li key={issue.id} className="border rounded p-3">
-                            <Link href={`/workspaces/${workspaceId}/projects/${pid}/issues/${issue.id}`} className="flex justify-between items-center">
-                                <span className="font-medium">{issue.title}</span>
-                                <div className="flex gap-2 text-xs text-muted-foreground">
-                                    <span>{issue.status}</span>
-                                    <span>{issue.priority}</span>
-                                    <span>{issue.assignee?.email ?? t('issue.unassigned')}</span>
-                                </div>
-                            </Link>
-                        </li>
+                        <Link key={issue.id} href={`/workspaces/${workspaceId}/projects/${pid}/issues/${issue.id}`}>
+                            <Card className="transition-colors hover:bg-muted/30">
+                                <CardContent className="flex justify-between items-center py-3">
+                                    <span className="font-medium text-sm">{issue.title}</span>
+                                    <div className="flex gap-2 items-center">
+                                        <span className={cn('rounded-full px-2 py-0.5 text-xs font-medium', priorityColor[issue.priority] || 'bg-muted')}>
+                                            {issue.priority}
+                                        </span>
+                                        <span className="text-xs text-muted-foreground">{issue.status}</span>
+                                        <span className="text-xs text-muted-foreground">{issue.assignee?.email ?? t('issue.unassigned')}</span>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </Link>
                     ))}
-                </ul>
+                </div>
             )}
 
-            {/* Create form */}
-            <form onSubmit={handleSubmit(onCreate)} className="flex flex-col gap-3 border-t pt-4">
-                <h2 className="text-lg font-bold">{t('issue.create_title')}</h2>
-                <input
-                    {...register('title')}
-                    placeholder={t('issue.title_placeholder')}
-                    className="border rounded px-3 py-2"
-                />
-                <textarea
-                    {...register('description')}
-                    placeholder={t('issue.description_placeholder')}
-                    className="border rounded px-3 py-2"
-                    rows={2}
-                />
-                <div className="flex gap-2">
-                    <select {...register('priority')} className="border rounded px-2 py-1 text-sm">
-                        <option value="LOW">Low</option>
-                        <option value="MEDIUM">Medium</option>
-                        <option value="HIGH">High</option>
-                        <option value="CRITICAL">Critical</option>
-                    </select>
-                    <select {...register('status')} className="border rounded px-2 py-1 text-sm">
-                        <option value="BACKLOG">Backlog</option>
-                        <option value="TODO">Todo</option>
-                        <option value="IN_PROGRESS">In Progress</option>
-                        <option value="DONE">Done</option>
-                    </select>
-                </div>
-                <button type="submit" className="bg-primary text-primary-foreground rounded px-3 py-2 self-start">
-                    {t('issue.create_button')}
-                </button>
-            </form>
+            <Separator />
+
+            <Card>
+                <CardHeader>
+                    <CardTitle className="text-base">{t('issue.create_title')}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <form onSubmit={handleSubmit(onCreate)} className="flex flex-col gap-4">
+                        <div className="flex flex-col gap-1.5">
+                            <Label htmlFor="issue-title">{t('issue.title_placeholder', 'Title')}</Label>
+                            <Input id="issue-title" {...register('title')} placeholder={t('issue.title_placeholder')} />
+                        </div>
+                        <div className="flex flex-col gap-1.5">
+                            <Label htmlFor="issue-desc">{t('issue.description_placeholder', 'Description')}</Label>
+                            <Textarea id="issue-desc" {...register('description')} placeholder={t('issue.description_placeholder')} rows={2} />
+                        </div>
+                        <div className="flex gap-2">
+                            <Select {...register('priority')}>
+                                <option value="LOW">Low</option>
+                                <option value="MEDIUM">Medium</option>
+                                <option value="HIGH">High</option>
+                                <option value="CRITICAL">Critical</option>
+                            </Select>
+                            <Select {...register('status')}>
+                                <option value="BACKLOG">Backlog</option>
+                                <option value="TODO">Todo</option>
+                                <option value="IN_PROGRESS">In Progress</option>
+                                <option value="DONE">Done</option>
+                            </Select>
+                        </div>
+                        <Button type="submit" className="self-start">
+                            {t('issue.create_button')}
+                        </Button>
+                    </form>
+                </CardContent>
+            </Card>
         </div>
     )
 }

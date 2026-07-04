@@ -13,6 +13,12 @@ import { Breadcrumb } from '@/components/ui/breadcrumb'
 import { useWorkspace } from '@/components/workspace-context'
 import { toast } from 'sonner'
 import { fetchAuth } from '@/lib/fetch-auth'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
+import { Bug } from 'lucide-react'
 
 type FormData = z.infer<typeof updateProjectSchema>
 
@@ -51,34 +57,41 @@ export default function ProjectDetailPage() {
     if (loading) return <Spinner />
 
     return (
-        <div className="flex flex-col gap-3 max-w-lg">
+        <div className="flex flex-col gap-6 max-w-lg">
             <Breadcrumb items={[
                 { label: workspaceName || '...', href: `/workspaces/${workspaceId}/projects` },
                 { label: t('project.breadcrumb_projects', 'Projects'), href: `/workspaces/${workspaceId}/projects` },
                 { label: projectName || t('project.detail_title') },
             ]} />
+
             <div className="flex justify-between items-center">
-                <h1 className="text-2xl font-bold">{t('project.detail_title')}</h1>
-                <Link href={`/workspaces/${workspaceId}/projects/${pid}/issues`} className="text-sm text-primary hover:underline">
-                    Issues →
-                </Link>
+                <h1 className="text-2xl font-bold tracking-tight">{t('project.detail_title')}</h1>
+                <Button variant="outline" size="sm" asChild>
+                    <Link href={`/workspaces/${workspaceId}/projects/${pid}/issues`}>
+                        <Bug className="size-4" />
+                        Issues
+                    </Link>
+                </Button>
             </div>
-            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
-                <input
-                    {...register('name')}
-                    placeholder={t('project.name_placeholder')}
-                    className="border rounded px-3 py-2"
-                />
-                <textarea
-                    {...register('description')}
-                    placeholder={t('project.description_placeholder')}
-                    className="border rounded px-3 py-2"
-                    rows={3}
-                />
-                <button type="submit" className="bg-primary text-primary-foreground rounded px-3 py-2">
-                    {t('project.save_button')}
-                </button>
-            </form>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle className="text-base">{t('project.edit_title', 'Edit project')}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+                        <div className="flex flex-col gap-1.5">
+                            <Label htmlFor="name">{t('project.name_placeholder', 'Name')}</Label>
+                            <Input id="name" {...register('name')} />
+                        </div>
+                        <div className="flex flex-col gap-1.5">
+                            <Label htmlFor="description">{t('project.description_placeholder', 'Description')}</Label>
+                            <Textarea id="description" {...register('description')} rows={3} />
+                        </div>
+                        <Button type="submit">{t('project.save_button')}</Button>
+                    </form>
+                </CardContent>
+            </Card>
         </div>
     )
 }

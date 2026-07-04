@@ -8,6 +8,11 @@ import { requestPasswordResetSchema } from '@/lib/validators/auth'
 import { useTranslation } from 'react-i18next'
 import { useState } from 'react'
 import { toast } from 'sonner'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
+import { Mail, CheckCircle } from 'lucide-react'
 
 type ForgotForm = z.infer<typeof requestPasswordResetSchema>
 
@@ -34,34 +39,44 @@ export default function ForgotPasswordPage() {
 
     if (sent) {
         return (
-            <div className="flex flex-col gap-4 text-center">
-                <p>✅ Check your email for the reset link.</p>
-                <Link href="/login" className="text-sm underline">
-                    {t('auth.link_login')}
-                </Link>
-            </div>
+            <Card>
+                <CardContent className="flex flex-col items-center gap-4 pt-6 text-center">
+                    <CheckCircle className="size-10 text-green-500" />
+                    <p className="text-sm text-muted-foreground">Check your email for the reset link.</p>
+                    <Button variant="outline" asChild>
+                        <Link href="/login">{t('auth.link_login')}</Link>
+                    </Button>
+                </CardContent>
+            </Card>
         )
     }
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-            <h1 className="text-2xl font-bold text-center">{t('auth.forgot_password_title')}</h1>
-            <input
-                {...register('email')}
-                placeholder={t('auth.email_placeholder')}
-                className="border rounded px-3 py-2"
-            />
-            {errors.email && <span className="text-red-500 text-sm">{errors.email.message}</span>}
-            <button
-                type="submit"
-                disabled={isSubmitting}
-                className="bg-primary text-primary-foreground rounded px-3 py-2"
-            >
-                {t('auth.reset_button')}
-            </button>
-            <Link href="/login" className="text-sm underline text-center">
-                {t('auth.link_login')}
-            </Link>
-        </form>
+        <Card>
+            <CardHeader className="text-center">
+                <CardTitle className="text-2xl flex items-center justify-center gap-2">
+                    <Mail className="size-5" />
+                    {t('auth.forgot_password_title')}
+                </CardTitle>
+                <CardDescription>{t('auth.forgot_subtitle', 'We\'ll send you a reset link')}</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+                    <div className="flex flex-col gap-1.5">
+                        <Label htmlFor="email">{t('auth.email_placeholder', 'Email')}</Label>
+                        <Input id="email" {...register('email')} placeholder="you@example.com" />
+                        {errors.email && <span className="text-destructive text-xs">{errors.email.message}</span>}
+                    </div>
+                    <Button type="submit" disabled={isSubmitting} className="w-full mt-2">
+                        {t('auth.reset_button')}
+                    </Button>
+                    <p className="text-center text-sm text-muted-foreground pt-2">
+                        <Link href="/login" className="hover:text-foreground transition-colors">
+                            {t('auth.link_login')}
+                        </Link>
+                    </p>
+                </form>
+            </CardContent>
+        </Card>
     )
 }

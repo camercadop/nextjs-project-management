@@ -8,6 +8,11 @@ import { loginSchema } from '@/lib/validators/auth'
 import { useTranslation } from 'react-i18next'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
+import { LogIn } from 'lucide-react'
 
 type LoginForm = z.infer<typeof loginSchema>
 
@@ -38,43 +43,43 @@ export default function LoginPage() {
     }
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-            <h1 className="text-2xl font-bold text-center">{t('auth.login_title')}</h1>
-            <input
-                {...register('email')}
-                placeholder="Email"
-                className="border rounded px-3 py-2"
-            />
-            {errors.email && <span className="text-red-500 text-sm">{errors.email.message}</span>}
-            <input
-                {...register('password')}
-                type="password"
-                placeholder="Password"
-                className="border rounded px-3 py-2"
-            />
-            {errors.password && (
-                <span className="text-red-500 text-sm">{errors.password.message}</span>
-            )}
-            <input
-                {...register('otp')}
-                placeholder="OTP (if enabled)"
-                className="border rounded px-3 py-2"
-            />
-            <button
-                type="submit"
-                disabled={isSubmitting}
-                className="bg-primary text-primary-foreground rounded px-3 py-2"
-            >
-                {t(isSubmitting ? 'Loading...' : 'Login')}
-            </button>
-            <div className="flex justify-between text-sm">
-                <Link href="/register" className="underline">
-                    {t('auth.link_register')}
-                </Link>
-                <Link href="/forgot-password" className="underline">
-                    {t('auth.link_forgot')}
-                </Link>
-            </div>
-        </form>
+        <Card>
+            <CardHeader className="text-center">
+                <CardTitle className="text-2xl flex items-center justify-center gap-2">
+                    <LogIn className="size-5" />
+                    {t('auth.login_title')}
+                </CardTitle>
+                <CardDescription>{t('auth.login_subtitle', 'Sign in to your account')}</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+                    <div className="flex flex-col gap-1.5">
+                        <Label htmlFor="email">Email</Label>
+                        <Input id="email" {...register('email')} placeholder="you@example.com" />
+                        {errors.email && <span className="text-destructive text-xs">{errors.email.message}</span>}
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                        <Label htmlFor="password">Password</Label>
+                        <Input id="password" {...register('password')} type="password" placeholder="••••••••" />
+                        {errors.password && <span className="text-destructive text-xs">{errors.password.message}</span>}
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                        <Label htmlFor="otp">OTP ({t('auth.otp_optional', 'if enabled')})</Label>
+                        <Input id="otp" {...register('otp')} placeholder="123456" />
+                    </div>
+                    <Button type="submit" disabled={isSubmitting} className="w-full mt-2">
+                        {isSubmitting ? t('auth.loading', 'Loading...') : t('auth.login_button', 'Login')}
+                    </Button>
+                    <div className="flex justify-between text-sm text-muted-foreground pt-2">
+                        <Link href="/register" className="hover:text-foreground transition-colors">
+                            {t('auth.link_register')}
+                        </Link>
+                        <Link href="/forgot-password" className="hover:text-foreground transition-colors">
+                            {t('auth.link_forgot')}
+                        </Link>
+                    </div>
+                </form>
+            </CardContent>
+        </Card>
     )
 }

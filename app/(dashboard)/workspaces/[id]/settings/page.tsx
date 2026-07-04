@@ -12,6 +12,12 @@ import { Breadcrumb } from '@/components/ui/breadcrumb'
 import { useWorkspace } from '@/components/workspace-context'
 import { toast } from 'sonner'
 import { fetchAuth } from '@/lib/fetch-auth'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
+import { Trash2 } from 'lucide-react'
 
 type UpdateForm = z.infer<typeof updateWorkspaceSchema>
 type InviteForm = z.output<typeof inviteMemberSchema>
@@ -81,77 +87,59 @@ export default function WorkspaceSettingsPage() {
     if (loading) return <Spinner />
 
     return (
-        <div className="flex flex-col gap-8 max-w-lg">
+        <div className="flex flex-col gap-6 max-w-lg">
             <Breadcrumb items={[
                 { label: workspaceName || '...', href: `/workspaces/${id}/projects` },
                 { label: t('workspace.settings_title', 'Settings') },
             ]} />
-            {/* Edit workspace */}
-            <form onSubmit={updateForm.handleSubmit(onUpdate)} className="flex flex-col gap-3">
-                <h2 className="text-xl font-bold">{t('workspace.settings_title')}</h2>
-                <input
-                    {...updateForm.register('name')}
-                    placeholder={t('workspace.name_placeholder')}
-                    className="border rounded px-3 py-2"
-                />
-                <textarea
-                    {...updateForm.register('description')}
-                    placeholder={t('workspace.description_placeholder')}
-                    className="border rounded px-3 py-2"
-                    rows={3}
-                />
-                <button
-                    type="submit"
-                    className="bg-primary text-primary-foreground rounded px-3 py-2"
-                >
-                    {t('workspace.save_button')}
-                </button>
-            </form>
 
-            {/* Members */}
-            <section className="flex flex-col gap-3">
-                <h2 className="text-xl font-bold">{t('workspace.members_title')}</h2>
-                <ul className="flex flex-col gap-2">
-                    {members.map(m => (
-                        <li
-                            key={m.id}
-                            className="flex justify-between items-center border rounded p-3"
-                        >
-                            <div>
-                                <span>{m.user.email}</span>
-                                <span className="ml-2 text-xs text-muted-foreground">
-                                    {m.role === 'OWNER'
-                                        ? t('workspace.role_owner')
-                                        : t('workspace.role_member')}
-                                </span>
-                            </div>
-                            {m.role !== 'OWNER' && (
-                                <button
-                                    onClick={() => onRemove(m.user.id)}
-                                    className="text-red-500 text-sm"
-                                >
-                                    {t('workspace.remove_button')}
-                                </button>
-                            )}
-                        </li>
-                    ))}
-                </ul>
+            <Card>
+                <CardHeader>
+                    <CardTitle>{t('workspace.settings_title')}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <form onSubmit={updateForm.handleSubmit(onUpdate)} className="flex flex-col gap-4">
+                        <div className="flex flex-col gap-1.5">
+                            <Label htmlFor="ws-name">{t('workspace.name_placeholder', 'Name')}</Label>
+                            <Input id="ws-name" {...updateForm.register('name')} />
+                        </div>
+                        <div className="flex flex-col gap-1.5">
+                            <Label htmlFor="ws-desc">{t('workspace.description_placeholder', 'Description')}</Label>
+                            <Textarea id="ws-desc" {...updateForm.register('description')} rows={3} />
+                        </div>
+                        <Button type="submit">{t('workspace.save_button')}</Button>
+                    </form>
+                </CardContent>
+            </Card>
 
-                {/* Invite form */}
-                <form onSubmit={inviteForm.handleSubmit(onInvite)} className="flex gap-2">
-                    <input
-                        {...inviteForm.register('email')}
-                        placeholder={t('workspace.invite_placeholder')}
-                        className="border rounded px-3 py-2 flex-1"
-                    />
-                    <button
-                        type="submit"
-                        className="bg-primary text-primary-foreground rounded px-3 py-2"
-                    >
-                        {t('workspace.invite_button')}
-                    </button>
-                </form>
-            </section>
+            <Card>
+                <CardHeader>
+                    <CardTitle>{t('workspace.members_title')}</CardTitle>
+                </CardHeader>
+                <CardContent className="flex flex-col gap-4">
+                    <ul className="flex flex-col gap-2">
+                        {members.map(m => (
+                            <li key={m.id} className="flex justify-between items-center rounded-lg border px-3 py-2.5">
+                                <div className="flex items-center gap-2">
+                                    <span className="text-sm">{m.user.email}</span>
+                                    <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
+                                        {m.role === 'OWNER' ? t('workspace.role_owner') : t('workspace.role_member')}
+                                    </span>
+                                </div>
+                                {m.role !== 'OWNER' && (
+                                    <Button variant="ghost" size="icon-xs" onClick={() => onRemove(m.user.id)}>
+                                        <Trash2 className="size-3.5 text-destructive" />
+                                    </Button>
+                                )}
+                            </li>
+                        ))}
+                    </ul>
+                    <form onSubmit={inviteForm.handleSubmit(onInvite)} className="flex gap-2">
+                        <Input {...inviteForm.register('email')} placeholder={t('workspace.invite_placeholder')} className="flex-1" />
+                        <Button type="submit">{t('workspace.invite_button')}</Button>
+                    </form>
+                </CardContent>
+            </Card>
         </div>
     )
 }

@@ -9,6 +9,11 @@ import { useTranslation } from 'react-i18next'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { toast } from 'sonner'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
+import { UserPlus } from 'lucide-react'
 
 type RegisterForm = z.infer<typeof registerSchema>
 
@@ -42,39 +47,41 @@ export default function RegisterPage() {
     }
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-            <h1 className="text-2xl font-bold text-center">{t('auth.register_title')}</h1>
-            <input
-                {...register('email')}
-                placeholder={t('auth.email_placeholder')}
-                className="border rounded px-3 py-2"
-            />
-            {errors.email && <span className="text-red-500 text-sm">{errors.email.message}</span>}
-            <input
-                {...register('password')}
-                type="password"
-                placeholder={t('auth.password_placeholder')}
-                className="border rounded px-3 py-2"
-            />
-            {errors.password && (
-                <span className="text-red-500 text-sm">{errors.password.message}</span>
-            )}
-            <button
-                type="submit"
-                disabled={isSubmitting}
-                className="bg-primary text-primary-foreground rounded px-3 py-2"
-            >
-                {t('auth.register_button')}
-            </button>
-            {error && (
-                <span className="text-red-500 text-sm text-center">
-                    <strong>{t('error_label')}: </strong>
-                    {error}
-                </span>
-            )}
-            <Link href="/login" className="text-sm underline text-center">
-                {t('auth.link_login')}
-            </Link>
-        </form>
+        <Card>
+            <CardHeader className="text-center">
+                <CardTitle className="text-2xl flex items-center justify-center gap-2">
+                    <UserPlus className="size-5" />
+                    {t('auth.register_title')}
+                </CardTitle>
+                <CardDescription>{t('auth.register_subtitle', 'Create a new account')}</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+                    <div className="flex flex-col gap-1.5">
+                        <Label htmlFor="email">{t('auth.email_placeholder', 'Email')}</Label>
+                        <Input id="email" {...register('email')} placeholder="you@example.com" />
+                        {errors.email && <span className="text-destructive text-xs">{errors.email.message}</span>}
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                        <Label htmlFor="password">{t('auth.password_placeholder', 'Password')}</Label>
+                        <Input id="password" {...register('password')} type="password" placeholder="••••••••" />
+                        {errors.password && <span className="text-destructive text-xs">{errors.password.message}</span>}
+                    </div>
+                    <Button type="submit" disabled={isSubmitting} className="w-full mt-2">
+                        {t('auth.register_button')}
+                    </Button>
+                    {error && (
+                        <p className="text-destructive text-xs text-center">
+                            <strong>{t('error_label')}: </strong>{error}
+                        </p>
+                    )}
+                    <p className="text-center text-sm text-muted-foreground pt-2">
+                        <Link href="/login" className="hover:text-foreground transition-colors">
+                            {t('auth.link_login')}
+                        </Link>
+                    </p>
+                </form>
+            </CardContent>
+        </Card>
     )
 }
