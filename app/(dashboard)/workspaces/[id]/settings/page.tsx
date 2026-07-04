@@ -8,6 +8,8 @@ import { useParams } from 'next/navigation'
 import { useTranslation } from 'react-i18next'
 import { updateWorkspaceSchema, inviteMemberSchema } from '@/lib/validators/workspace'
 import { Spinner } from '@/components/ui/spinner'
+import { Breadcrumb } from '@/components/ui/breadcrumb'
+import { useWorkspace } from '@/components/workspace-context'
 import { toast } from 'sonner'
 import { fetchAuth } from '@/lib/fetch-auth'
 
@@ -22,6 +24,7 @@ interface Member {
 
 export default function WorkspaceSettingsPage() {
     const { id } = useParams<{ id: string }>()
+    const { workspaceName } = useWorkspace()
     const { t } = useTranslation('workspace')
     const [members, setMembers] = useState<Member[]>([])
     const [loading, setLoading] = useState(true)
@@ -79,6 +82,10 @@ export default function WorkspaceSettingsPage() {
 
     return (
         <div className="flex flex-col gap-8 max-w-lg">
+            <Breadcrumb items={[
+                { label: workspaceName || '...', href: `/workspaces/${id}/projects` },
+                { label: t('workspace.settings_title', 'Settings') },
+            ]} />
             {/* Edit workspace */}
             <form onSubmit={updateForm.handleSubmit(onUpdate)} className="flex flex-col gap-3">
                 <h2 className="text-xl font-bold">{t('workspace.settings_title')}</h2>

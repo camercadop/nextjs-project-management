@@ -9,6 +9,8 @@ import { useTranslation } from 'react-i18next'
 import Link from 'next/link'
 import { createIssueSchema } from '@/lib/validators/issue'
 import { Spinner } from '@/components/ui/spinner'
+import { Breadcrumb } from '@/components/ui/breadcrumb'
+import { useWorkspace } from '@/components/workspace-context'
 import { toast } from 'sonner'
 import { fetchAuth } from '@/lib/fetch-auth'
 
@@ -23,10 +25,13 @@ interface Issue {
 }
 
 export default function ProjectIssuesPage() {
-    const { id: projectId } = useParams<{ id: string }>()
+    const { id: workspaceId, pid } = useParams<{ id: string; pid: string }>()
+    const { workspaceName } = useWorkspace()
     const { t } = useTranslation('issue')
+    const { t: tProject } = useTranslation('project')
     const [issues, setIssues] = useState<Issue[]>([])
     const [loading, setLoading] = useState(true)
+    const [projectName, setProjectName] = useState('')
     const [filterStatus, setFilterStatus] = useState('')
     const [filterPriority, setFilterPriority] = useState('')
 
@@ -34,21 +39,27 @@ export default function ProjectIssuesPage() {
         resolver: zodResolver(createIssueSchema),
     })
 
+    useEffect(() => {
+        fetchAuth(`/api/projects/${pid}`)
+            .then(res => res.json())
+            .then(data => { if (data.ok) setProjectName(data.project.name) })
+    }, [pid])
+
     const fetchIssues = async () => {
         const params = new URLSearchParams()
         if (filterStatus) params.set('status', filterStatus)
         if (filterPriority) params.set('priority', filterPriority)
-        const res = await fetchAuth(`/api/projects/${projectId}/issues?${params}`)
+        const res = await fetchAuth(`/api/projects/${pid}/issues?${params}`)
         const data = await res.json()
         if (data.ok) setIssues(data.issues)
     }
 
     useEffect(() => {
         fetchIssues().finally(() => setLoading(false))
-    }, [projectId, filterStatus, filterPriority])
+    }, [pid, filterStatus, filterPriority])
 
     const onCreate = async (data: CreateForm) => {
-        const res = await fetchAuth(`/api/projects/${projectId}/issues`, {
+        const res = await fetchAuth(`/api/projects/${pid}/issues`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data),
@@ -66,6 +77,13 @@ export default function ProjectIssuesPage() {
 
     return (
         <div className="flex flex-col gap-6 max-w-2xl">
+            <Breadcrumb items={[
+                { label: workspaceName || '...', href: `/workspaces/${workspaceId}/projects` },
+                { label: tProject('project.breadcrumb_projects', 'Projects'), href: `/workspaces/${workspaceId}/projects` },
+                { label: projectName || '...', href: `/workspaces/${workspaceId}/projects/${pid}` },
+                { label: 'Issues' },
+            ]} />
+
             <h1 className="text-2xl font-bold">{t('issue.title')}</h1>
 
             {/* Filters */}
@@ -101,7 +119,7 @@ export default function ProjectIssuesPage() {
                 <ul className="flex flex-col gap-2">
                     {issues.map(issue => (
                         <li key={issue.id} className="border rounded p-3">
-                            <Link href={`/issues/${issue.id}`} className="flex justify-between items-center">
+                            <Link href={`/workspaces/${workspaceId}/projects/${pid}/issues/${issue.id}`} className="flex justify-between items-center">
                                 <span className="font-medium">{issue.title}</span>
                                 <div className="flex gap-2 text-xs text-muted-foreground">
                                     <span>{issue.status}</span>

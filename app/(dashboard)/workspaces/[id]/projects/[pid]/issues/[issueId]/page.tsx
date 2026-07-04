@@ -8,6 +8,8 @@ import { useParams, useRouter } from 'next/navigation'
 import { useTranslation } from 'react-i18next'
 import { updateIssueSchema } from '@/lib/validators/issue'
 import { Spinner } from '@/components/ui/spinner'
+import { Breadcrumb } from '@/components/ui/breadcrumb'
+import { useWorkspace } from '@/components/workspace-context'
 import { toast } from 'sonner'
 import { fetchAuth } from '@/lib/fetch-auth'
 
@@ -22,19 +24,28 @@ interface HistoryEntry {
 }
 
 export default function IssueDetailPage() {
-    const { id } = useParams<{ id: string }>()
+    const { id: workspaceId, pid, issueId } = useParams<{ id: string; pid: string; issueId: string }>()
+    const { workspaceName } = useWorkspace()
     const router = useRouter()
     const { t } = useTranslation('issue')
+    const { t: tProject } = useTranslation('project')
     const [loading, setLoading] = useState(true)
     const [history, setHistory] = useState<HistoryEntry[]>([])
-    const [projectId, setProjectId] = useState('')
+    const [projectName, setProjectName] = useState('')
+    const [issueTitle, setIssueTitle] = useState('')
 
     const { register, handleSubmit, reset } = useForm<FormData>({
         resolver: zodResolver(updateIssueSchema),
     })
 
     useEffect(() => {
-        fetchAuth(`/api/issues/${id}`)
+        fetchAuth(`/api/projects/${pid}`)
+            .then(res => res.json())
+            .then(data => { if (data.ok) setProjectName(data.project.name) })
+    }, [pid])
+
+    useEffect(() => {
+        fetchAuth(`/api/issues/${issueId}`)
             .then(res => res.json())
             .then(data => {
                 if (data.ok) {
@@ -46,21 +57,21 @@ export default function IssueDetailPage() {
                         assigneeId: data.issue.assigneeId,
                     })
                     setHistory(data.history)
-                    setProjectId(data.issue.projectId)
+                    setIssueTitle(data.issue.title)
                 }
             })
             .finally(() => setLoading(false))
-    }, [id])
+    }, [issueId])
 
     const onSubmit = async (data: FormData) => {
-        const res = await fetchAuth(`/api/issues/${id}`, {
+        const res = await fetchAuth(`/api/issues/${issueId}`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data),
         })
         if (res.ok) {
             toast.success(t('issue.updated'))
-            const updated = await fetchAuth(`/api/issues/${id}`).then(r => r.json())
+            const updated = await fetchAuth(`/api/issues/${issueId}`).then(r => r.json())
             if (updated.ok) setHistory(updated.history)
         } else {
             toast.error(t('issue.update_error'))
@@ -68,10 +79,10 @@ export default function IssueDetailPage() {
     }
 
     const onDelete = async () => {
-        const res = await fetchAuth(`/api/issues/${id}`, { method: 'DELETE' })
+        const res = await fetchAuth(`/api/issues/${issueId}`, { method: 'DELETE' })
         if (res.ok) {
             toast.success(t('issue.deleted'))
-            router.push(`/projects/${projectId}/issues`)
+            router.push(`/workspaces/${workspaceId}/projects/${pid}/issues`)
         } else {
             toast.error(t('issue.delete_error'))
         }
@@ -81,11 +92,13 @@ export default function IssueDetailPage() {
 
     return (
         <div className="flex flex-col gap-6 max-w-lg">
-            {projectId && (
-                <a href={`/projects/${projectId}/issues`} className="text-sm text-muted-foreground">
-                    ← {t('issue.back')}
-                </a>
-            )}
+            <Breadcrumb items={[
+                { label: workspaceName || '...', href: `/workspaces/${workspaceId}/projects` },
+                { label: tProject('project.breadcrumb_projects', 'Projects'), href: `/workspaces/${workspaceId}/projects` },
+                { label: projectName || '...', href: `/workspaces/${workspaceId}/projects/${pid}` },
+                { label: 'Issues', href: `/workspaces/${workspaceId}/projects/${pid}/issues` },
+                { label: issueTitle || t('issue.detail_title') },
+            ]} />
 
             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
                 <h1 className="text-2xl font-bold">{t('issue.detail_title')}</h1>

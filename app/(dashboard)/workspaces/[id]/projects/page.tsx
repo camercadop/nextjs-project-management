@@ -5,6 +5,8 @@ import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import { useTranslation } from 'react-i18next'
 import { Spinner } from '@/components/ui/spinner'
+import { Breadcrumb } from '@/components/ui/breadcrumb'
+import { useWorkspace } from '@/components/workspace-context'
 import { toast } from 'sonner'
 import { fetchAuth } from '@/lib/fetch-auth'
 
@@ -17,6 +19,7 @@ interface Project {
 
 export default function ProjectsPage() {
     const { id } = useParams<{ id: string }>()
+    const { workspaceName } = useWorkspace()
     const { t } = useTranslation('project')
     const [projects, setProjects] = useState<Project[]>([])
     const [tab, setTab] = useState<'ACTIVE' | 'ARCHIVED'>('ACTIVE')
@@ -43,6 +46,10 @@ export default function ProjectsPage() {
 
     return (
         <div className="flex flex-col gap-4">
+            <Breadcrumb items={[
+                { label: workspaceName || '...', href: `/workspaces/${id}/projects` },
+                { label: t('project.breadcrumb_projects', 'Projects') },
+            ]} />
             <div className="flex justify-between items-center">
                 <h1 className="text-2xl font-bold">{t('project.title')}</h1>
                 <Link
@@ -76,7 +83,7 @@ export default function ProjectsPage() {
                 <ul className="flex flex-col gap-2">
                     {projects.map(p => (
                         <li key={p.id} className="flex justify-between items-center border rounded p-4">
-                            <Link href={`/projects/${p.id}`} className="hover:underline">
+                            <Link href={`/workspaces/${id}/projects/${p.id}`} className="hover:underline">
                                 <p className="font-medium">{p.name}</p>
                                 {p.description && (
                                     <p className="text-sm text-muted-foreground">{p.description}</p>
@@ -84,7 +91,7 @@ export default function ProjectsPage() {
                             </Link>
                             <div className="flex gap-3 items-center">
                                 <Link
-                                    href={`/projects/${p.id}/issues`}
+                                    href={`/workspaces/${id}/projects/${p.id}/issues`}
                                     className="text-sm text-muted-foreground hover:text-foreground"
                                 >
                                     Issues
