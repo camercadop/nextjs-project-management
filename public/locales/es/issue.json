@@ -21,5 +21,15 @@
   "issue.history_title": "Historial",
   "issue.history_empty": "Sin cambios registrados.",
   "issue.history_entry": "{{field}} cambió de \"{{oldValue}}\" a \"{{newValue}}\"",
-  "issue.back": "Volver a issues"
+  "issue.back": "Volver a issues",
+  "issue.status_all": "Todos",
+  "issue.priority_all": "Todas",
+  "issue.status_backlog": "Backlog",
+  "issue.status_todo": "Por hacer",
+  "issue.status_in_progress": "En progreso",
+  "issue.status_done": "Hecho",
+  "issue.priority_low": "Baja",
+  "issue.priority_medium": "Media",
+  "issue.priority_high": "Alta",
+  "issue.priority_critical": "Crítica"
 }

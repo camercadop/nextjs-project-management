@@ -21,5 +21,15 @@
   "issue.history_title": "History",
   "issue.history_empty": "No changes recorded.",
   "issue.history_entry": "{{field}} changed from \"{{oldValue}}\" to \"{{newValue}}\"",
-  "issue.back": "Back to issues"
+  "issue.back": "Back to issues",
+  "issue.status_all": "All",
+  "issue.priority_all": "All",
+  "issue.status_backlog": "Backlog",
+  "issue.status_todo": "Todo",
+  "issue.status_in_progress": "In Progress",
+  "issue.status_done": "Done",
+  "issue.priority_low": "Low",
+  "issue.priority_medium": "Medium",
+  "issue.priority_high": "High",
+  "issue.priority_critical": "Critical"
 }

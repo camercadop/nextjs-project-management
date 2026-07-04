@@ -70,7 +70,20 @@ export default function ProjectIssuesPage() {
     }
 
     useEffect(() => {
-        fetchIssues().finally(() => setLoading(false))
+        let ignore = false
+        const load = async () => {
+            const params = new URLSearchParams()
+            if (filterStatus) params.set('status', filterStatus)
+            if (filterPriority) params.set('priority', filterPriority)
+            const res = await fetchAuth(`/api/projects/${pid}/issues?${params}`)
+            const data = await res.json()
+            if (!ignore) {
+                if (data.ok) setIssues(data.issues)
+                setLoading(false)
+            }
+        }
+        load()
+        return () => { ignore = true }
     }, [pid, filterStatus, filterPriority])
 
     const onCreate = async (data: CreateForm) => {
@@ -103,18 +116,18 @@ export default function ProjectIssuesPage() {
 
             <div className="flex gap-2">
                 <Select value={filterStatus} onChange={e => setFilterStatus(e.target.value)}>
-                    <option value="">{t('issue.status')}: All</option>
-                    <option value="BACKLOG">Backlog</option>
-                    <option value="TODO">Todo</option>
-                    <option value="IN_PROGRESS">In Progress</option>
-                    <option value="DONE">Done</option>
+                    <option value="">{t('issue.status')}: {t('issue.status_all')}</option>
+                    <option value="BACKLOG">{t('issue.status_backlog')}</option>
+                    <option value="TODO">{t('issue.status_todo')}</option>
+                    <option value="IN_PROGRESS">{t('issue.status_in_progress')}</option>
+                    <option value="DONE">{t('issue.status_done')}</option>
                 </Select>
                 <Select value={filterPriority} onChange={e => setFilterPriority(e.target.value)}>
-                    <option value="">{t('issue.priority')}: All</option>
-                    <option value="LOW">Low</option>
-                    <option value="MEDIUM">Medium</option>
-                    <option value="HIGH">High</option>
-                    <option value="CRITICAL">Critical</option>
+                    <option value="">{t('issue.priority')}: {t('issue.priority_all')}</option>
+                    <option value="LOW">{t('issue.priority_low')}</option>
+                    <option value="MEDIUM">{t('issue.priority_medium')}</option>
+                    <option value="HIGH">{t('issue.priority_high')}</option>
+                    <option value="CRITICAL">{t('issue.priority_critical')}</option>
                 </Select>
             </div>
 
@@ -163,16 +176,16 @@ export default function ProjectIssuesPage() {
                         </div>
                         <div className="flex gap-2">
                             <Select {...register('priority')}>
-                                <option value="LOW">Low</option>
-                                <option value="MEDIUM">Medium</option>
-                                <option value="HIGH">High</option>
-                                <option value="CRITICAL">Critical</option>
+                                <option value="LOW">{t('issue.priority_low')}</option>
+                                <option value="MEDIUM">{t('issue.priority_medium')}</option>
+                                <option value="HIGH">{t('issue.priority_high')}</option>
+                                <option value="CRITICAL">{t('issue.priority_critical')}</option>
                             </Select>
                             <Select {...register('status')}>
-                                <option value="BACKLOG">Backlog</option>
-                                <option value="TODO">Todo</option>
-                                <option value="IN_PROGRESS">In Progress</option>
-                                <option value="DONE">Done</option>
+                                <option value="BACKLOG">{t('issue.status_backlog')}</option>
+                                <option value="TODO">{t('issue.status_todo')}</option>
+                                <option value="IN_PROGRESS">{t('issue.status_in_progress')}</option>
+                                <option value="DONE">{t('issue.status_done')}</option>
                             </Select>
                         </div>
                         <Button type="submit" className="self-start">
