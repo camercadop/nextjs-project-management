@@ -1,12 +1,13 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useParams } from 'next/navigation'
 import { useTranslation } from 'react-i18next'
 import { updateProjectSchema } from '@/lib/validators/project'
+import { Spinner } from '@/components/ui/spinner'
 
 type FormData = z.infer<typeof updateProjectSchema>
 
@@ -16,6 +17,7 @@ export default function ProjectDetailPage() {
     const { register, handleSubmit, reset } = useForm<FormData>({
         resolver: zodResolver(updateProjectSchema),
     })
+    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
         fetch(`/api/projects/${id}`)
@@ -23,6 +25,7 @@ export default function ProjectDetailPage() {
             .then(data => {
                 if (data.ok) reset({ name: data.project.name, description: data.project.description ?? '' })
             })
+            .finally(() => setLoading(false))
     }, [id])
 
     const onSubmit = async (data: FormData) => {
@@ -32,6 +35,8 @@ export default function ProjectDetailPage() {
             body: JSON.stringify(data),
         })
     }
+
+    if (loading) return <Spinner />
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3 max-w-lg">

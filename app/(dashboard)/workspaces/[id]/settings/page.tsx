@@ -7,6 +7,7 @@ import { z } from 'zod'
 import { useParams } from 'next/navigation'
 import { useTranslation } from 'react-i18next'
 import { updateWorkspaceSchema, inviteMemberSchema } from '@/lib/validators/workspace'
+import { Spinner } from '@/components/ui/spinner'
 
 type UpdateForm = z.infer<typeof updateWorkspaceSchema>
 type InviteForm = z.output<typeof inviteMemberSchema>
@@ -21,6 +22,7 @@ export default function WorkspaceSettingsPage() {
     const { id } = useParams<{ id: string }>()
     const { t } = useTranslation('workspace')
     const [members, setMembers] = useState<Member[]>([])
+    const [loading, setLoading] = useState(true)
 
     const updateForm = useForm<UpdateForm>({ resolver: zodResolver(updateWorkspaceSchema) })
     const inviteForm = useForm<InviteForm>({ resolver: zodResolver(inviteMemberSchema) })
@@ -37,6 +39,7 @@ export default function WorkspaceSettingsPage() {
                     setMembers(data.workspace.members)
                 }
             })
+            .finally(() => setLoading(false))
     }, [id])
 
     const onUpdate = async (data: UpdateForm) => {
@@ -64,6 +67,8 @@ export default function WorkspaceSettingsPage() {
         const res = await fetch(`/api/workspaces/${id}/members/${userId}`, { method: 'DELETE' })
         if (res.ok) setMembers(prev => prev.filter(m => m.user.id !== userId))
     }
+
+    if (loading) return <Spinner />
 
     return (
         <div className="flex flex-col gap-8 max-w-lg">

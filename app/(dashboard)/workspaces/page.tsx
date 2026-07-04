@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useTranslation } from 'react-i18next'
+import { Spinner } from '@/components/ui/spinner'
 
 interface Workspace {
     id: string
@@ -13,14 +14,15 @@ interface Workspace {
 export default function WorkspacesPage() {
     const { t } = useTranslation('workspace')
     const [workspaces, setWorkspaces] = useState<Workspace[]>([])
+    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        // Fetch the list of workspaces for the authenticated user
         fetch('/api/workspaces')
             .then(res => res.json())
             .then(data => {
                 if (data.ok) setWorkspaces(data.workspaces)
             })
+            .finally(() => setLoading(false))
     }, [])
 
     return (
@@ -34,7 +36,9 @@ export default function WorkspacesPage() {
                     {t('workspace.create_button')}
                 </Link>
             </div>
-            {workspaces.length === 0 ? (
+            {loading ? (
+                <Spinner />
+            ) : workspaces.length === 0 ? (
                 <p className="text-muted-foreground">{t('workspace.empty')}</p>
             ) : (
                 <ul className="flex flex-col gap-2">

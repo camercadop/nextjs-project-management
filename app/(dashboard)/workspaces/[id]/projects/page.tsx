@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import { useTranslation } from 'react-i18next'
+import { Spinner } from '@/components/ui/spinner'
 
 interface Project {
     id: string
@@ -17,11 +18,15 @@ export default function ProjectsPage() {
     const { t } = useTranslation('project')
     const [projects, setProjects] = useState<Project[]>([])
     const [tab, setTab] = useState<'ACTIVE' | 'ARCHIVED'>('ACTIVE')
+    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
+        let stale = false
         fetch(`/api/workspaces/${id}/projects?status=${tab}`)
             .then(res => res.json())
-            .then(data => { if (data.ok) setProjects(data.projects) })
+            .then(data => { if (!stale && data.ok) setProjects(data.projects) })
+            .finally(() => { if (!stale) setLoading(false) })
+        return () => { stale = true }
     }, [id, tab])
 
     const onArchive = async (projectId: string) => {
@@ -43,20 +48,22 @@ export default function ProjectsPage() {
 
             <div className="flex gap-2">
                 <button
-                    onClick={() => setTab('ACTIVE')}
+                    onClick={() => { setTab('ACTIVE'); setLoading(true) }}
                     className={`px-3 py-1 rounded ${tab === 'ACTIVE' ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}
                 >
                     {t('project.tab_active')}
                 </button>
                 <button
-                    onClick={() => setTab('ARCHIVED')}
+                    onClick={() => { setTab('ARCHIVED'); setLoading(true) }}
                     className={`px-3 py-1 rounded ${tab === 'ARCHIVED' ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}
                 >
                     {t('project.tab_archived')}
                 </button>
             </div>
 
-            {projects.length === 0 ? (
+            {loading ? (
+                <Spinner />
+            ) : projects.length === 0 ? (
                 <p className="text-muted-foreground">{t('project.empty')}</p>
             ) : (
                 <ul className="flex flex-col gap-2">
