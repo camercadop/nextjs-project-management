@@ -1,0 +1,15 @@
+{
+  "workspace.title": "Workspaces",
+  "workspace.create_title": "Crear workspace",
+  "workspace.name_placeholder": "Nombre del workspace",
+  "workspace.description_placeholder": "Descripción (opcional)",
+  "workspace.create_button": "Crear",
+  "workspace.empty": "No tienes workspaces aún.",
+  "workspace.settings_title": "Configuración",
+  "workspace.members_title": "Miembros",
+  "workspace.invite_placeholder": "Email del usuario",
+  "workspace.invite_button": "Invitar",
+  "workspace.remove_button": "Eliminar",
+  "workspace.role_owner": "Propietario",
+  "workspace.role_member": "Miembro"
+}

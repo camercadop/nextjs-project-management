@@ -6,7 +6,7 @@ vi.mock('@/lib/email', () => ({
     sendMail: vi.fn(() => Promise.resolve()),
 }))
 
-vi.mock('@/lib/i18n', () => ({
+vi.mock('@/lib/i18n-server', () => ({
     t: vi.fn((key: string) => key),
 }))
 

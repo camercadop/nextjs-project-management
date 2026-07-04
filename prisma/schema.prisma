@@ -8,7 +8,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
 }
 
 model User {
@@ -21,4 +21,27 @@ model User {
   resetTokenExpiry DateTime?
   otpSecret        String?
   otpEnabled       Boolean   @default(false)
+
+  workspaces       WorkspaceMember[]
+}
+
+model Workspace {
+  id            String   @id @default(uuid())
+  name          String
+  description   String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  members       WorkspaceMember[]
+}
+
+model WorkspaceMember {
+  id            String @id @default(uuid())
+  role          String @default("MEMBER") // OWNER | MEMBER
+  userId        String
+  workspaceId   String
+  createdAt     DateTime @default(now())
+  user          User  @relation(fields: [userId], references: [id])
+  workspace     Workspace @relation(fields:[workspaceId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, workspaceId])
 }
