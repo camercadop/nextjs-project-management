@@ -19,11 +19,11 @@ export interface ActivityEventRow {
  */
 export const getActivityFeed = cache(
     async (workspaceId: string, limit = 10): Promise<ActivityEventRow[]> => {
-        return prisma.activityEvent.findMany({
+        return (await prisma.activityEvent.findMany({
             where: { workspaceId },
             orderBy: { createdAt: 'desc' },
             take: limit,
             include: { user: { select: { id: true, email: true } } },
-        }) as ActivityEventRow[]
+        })) as unknown as ActivityEventRow[]
     }
 )
