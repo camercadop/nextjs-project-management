@@ -1,0 +1,10 @@
+{
+  "dashboard.title": "Dashboard",
+  "dashboard.projects": "Projects",
+  "dashboard.total_issues": "Total Issues",
+  "dashboard.open": "Open",
+  "dashboard.closed": "Closed",
+  "dashboard.by_status": "Issues by Status",
+  "dashboard.by_assignee": "Issues by Assignee",
+  "dashboard.no_assigned": "No assigned issues"
+}

@@ -85,9 +85,38 @@ docs/
 
 - **Auth:** JWT access + refresh tokens stored in httpOnly cookies
 - **Validation:** Zod schemas in `lib/validators/`
-- **i18n:** Use `i18next` — client config in `lib/i18n.ts`, server in `lib/i18n-server.ts`
+- **i18n:** Use `i18next` — client config in `lib/i18n.ts`, server in `lib/i18n-server.ts` (see [i18n usage](#i18n-usage) below)
 - **Styling:** Tailwind CSS 4 + shadcn/ui components
 - **Testing:** Integration tests with Vitest in `tests/integration/`
+
+## i18n Usage
+
+Translation files live in `public/locales/{lng}/{namespace}.json`.
+
+### Server Components
+
+Use the `t()` helper from `lib/i18n-server.ts`:
+
+```tsx
+import { t } from '@/lib/i18n-server'
+
+export default async function MyPage() {
+    return <h1>{t('dashboard.title', 'dashboard')}</h1>
+}
+```
+
+Signature: `t(key: string, ns?: string, lng?: string)`
+
+- `key` — translation key (e.g. `issue.status_backlog`)
+- `ns` — namespace matching the JSON filename (e.g. `'issue'`, `'dashboard'`), defaults to `'common'`
+- `lng` — language code, defaults to `NEXT_PUBLIC_DEFAULT_LOCALE` (rarely needed)
+
+### Rules
+
+- Never hardcode user-facing strings — always use translation keys
+- Group keys by namespace: `common.json`, `issue.json`, `dashboard.json`, etc.
+- Add new keys to **all** supported locale files (`es`, `en`)
+- Use lowercase snake_case for keys: `issue.status_in_progress`
 
 ## Branching
 

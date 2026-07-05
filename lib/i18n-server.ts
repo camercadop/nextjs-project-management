@@ -19,7 +19,7 @@ function loadServerTranslations(lng: string, ns = 'common') {
     serverI18n.addResourceBundle(lng, ns, data)
 }
 
-export function t(key: string, lng = 'es') {
-    loadServerTranslations(lng)
-    return serverI18n.getFixedT(lng)(key)
+export function t(key: string, ns = 'common', lng = process.env.NEXT_PUBLIC_DEFAULT_LOCALE || 'es') {
+    loadServerTranslations(lng, ns)
+    return serverI18n.getFixedT(lng, ns)(key)
 }

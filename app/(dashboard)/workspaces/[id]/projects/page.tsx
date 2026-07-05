@@ -11,7 +11,7 @@ import { toast } from 'sonner'
 import { fetchAuth } from '@/lib/fetch-auth'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Plus, Archive, ArchiveRestore, Bug } from 'lucide-react'
+import { Plus, Archive, ArchiveRestore, Bug, LayoutDashboard } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface Project {
@@ -56,12 +56,20 @@ export default function ProjectsPage() {
             ]} />
             <div className="flex justify-between items-center">
                 <h1 className="text-2xl font-bold tracking-tight">{t('project.title')}</h1>
-                <Button asChild>
-                    <Link href={`/workspaces/${id}/projects/new`}>
-                        <Plus className="size-4" />
-                        {t('project.create_button')}
-                    </Link>
-                </Button>
+                <div className="flex gap-2">
+                    <Button variant="outline" asChild>
+                        <Link href={`/workspaces/${id}/dashboard`}>
+                            <LayoutDashboard className="size-4" />
+                            Dashboard
+                        </Link>
+                    </Button>
+                    <Button asChild>
+                        <Link href={`/workspaces/${id}/projects/new`}>
+                            <Plus className="size-4" />
+                            {t('project.create_button')}
+                        </Link>
+                    </Button>
+                </div>
             </div>
 
             <div className="flex gap-1 rounded-lg bg-muted p-1 w-fit">
