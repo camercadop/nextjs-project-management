@@ -13,7 +13,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
-import { List } from 'lucide-react'
+import { List, Circle, User } from 'lucide-react'
 
 interface Issue {
     id: string
@@ -26,10 +26,17 @@ interface Issue {
 const COLUMNS = ['BACKLOG', 'TODO', 'IN_PROGRESS', 'DONE'] as const
 
 const priorityColor: Record<string, string> = {
-    LOW: 'bg-muted text-muted-foreground',
+    LOW: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400',
     MEDIUM: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
     HIGH: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400',
     CRITICAL: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
+}
+
+const columnColor: Record<string, string> = {
+    BACKLOG: 'text-muted-foreground',
+    TODO: 'text-blue-500',
+    IN_PROGRESS: 'text-amber-500',
+    DONE: 'text-emerald-500',
 }
 
 export default function KanbanBoardPage() {
@@ -105,21 +112,26 @@ export default function KanbanBoardPage() {
             </div>
 
             <DragDropContext onDragEnd={onDragEnd}>
-                <div className="grid grid-cols-4 gap-4 flex-1 min-h-0">
+                <div className="grid grid-cols-4 gap-3 flex-1 min-h-0">
                     {COLUMNS.map(status => (
-                        <div key={status} className="flex flex-col gap-2">
-                            <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide px-1">
-                                {t(`issue.status_${status.toLowerCase()}`)}
-                                <span className="ml-1.5 text-xs">({getColumnIssues(status).length})</span>
-                            </h2>
+                        <div key={status} className="flex flex-col gap-2 rounded-xl bg-muted/40 p-2">
+                            <div className="flex items-center gap-2 px-2 py-1.5">
+                                <Circle className={cn('size-2.5 fill-current', columnColor[status])} />
+                                <h2 className="text-xs font-semibold uppercase tracking-wide text-foreground">
+                                    {t(`issue.status_${status.toLowerCase()}`)}
+                                </h2>
+                                <span className="ml-auto rounded-full bg-background px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground ring-1 ring-border">
+                                    {getColumnIssues(status).length}
+                                </span>
+                            </div>
                             <Droppable droppableId={status}>
                                 {(provided, snapshot) => (
                                     <div
                                         ref={provided.innerRef}
                                         {...provided.droppableProps}
                                         className={cn(
-                                            'flex flex-col gap-2 p-2 rounded-lg border border-dashed min-h-[200px] transition-colors',
-                                            snapshot.isDraggingOver && 'border-primary/50 bg-primary/5'
+                                            'flex flex-col gap-2 p-1 rounded-lg min-h-[200px] transition-colors',
+                                            snapshot.isDraggingOver && 'bg-primary/5 ring-2 ring-primary/20 ring-inset rounded-lg'
                                         )}
                                     >
                                         {getColumnIssues(status).map((issue, index) => (
@@ -132,18 +144,19 @@ export default function KanbanBoardPage() {
                                                     >
                                                         <Link href={`/workspaces/${workspaceId}/projects/${pid}/issues/${issue.id}`}>
                                                             <Card className={cn(
-                                                                'transition-shadow hover:shadow-md',
-                                                                snapshot.isDragging && 'shadow-lg rotate-2'
+                                                                'transition-all duration-150 hover:shadow-md hover:-translate-y-0.5 border-0 shadow-sm',
+                                                                snapshot.isDragging && 'shadow-xl rotate-1 scale-105'
                                                             )}>
-                                                                <CardContent className="p-3 flex flex-col gap-1.5">
-                                                                    <span className="text-sm font-medium leading-tight">{issue.title}</span>
-                                                                    <div className="flex items-center gap-2">
-                                                                        <span className={cn('rounded-full px-2 py-0.5 text-[10px] font-medium', priorityColor[issue.priority])}>
+                                                                <CardContent className="p-3 flex flex-col gap-2">
+                                                                    <span className="text-sm font-medium leading-snug">{issue.title}</span>
+                                                                    <div className="flex items-center justify-between">
+                                                                        <span className={cn('rounded-md px-2 py-0.5 text-[10px] font-semibold', priorityColor[issue.priority])}>
                                                                             {issue.priority}
                                                                         </span>
                                                                         {issue.assignee && (
-                                                                            <span className="text-[10px] text-muted-foreground truncate">
-                                                                                {issue.assignee.email}
+                                                                            <span className="flex items-center gap-1 text-[10px] text-muted-foreground" title={issue.assignee.email}>
+                                                                                <User className="size-3" />
+                                                                                <span className="max-w-[80px] truncate">{issue.assignee.email.split('@')[0]}</span>
                                                                             </span>
                                                                         )}
                                                                     </div>

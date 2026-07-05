@@ -33,7 +33,8 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
         prisma.issueHistory.findMany({ where: { issueId: id }, orderBy: { createdAt: 'desc' } }),
     ])
 
-    const { project, ...issueData } = issue
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { project: _, ...issueData } = issue
     return NextResponse.json({ ok: true, issue: { ...issueData, assignee }, history })
 }
 

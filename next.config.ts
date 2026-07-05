@@ -1,9 +1,10 @@
 import type { NextConfig } from 'next'
 
-const { i18n } = require('./next-i18next.config')
-
 const nextConfig: NextConfig = {
-    i18n,
+    i18n: {
+        defaultLocale: process.env.NEXT_PUBLIC_DEFAULT_LOCALE || 'es',
+        locales: (process.env.NEXT_PUBLIC_SUPPORTED_LOCALES || 'es,en').split(','),
+    },
 }
 
 export default nextConfig

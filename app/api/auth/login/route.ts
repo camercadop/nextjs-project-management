@@ -99,7 +99,7 @@ export async function POST(req: Request) {
             accessToken,
             user: { id: user.id, email: user.email },
         })
-    } catch (err) {
+    } catch {
         return NextResponse.json({ error: { code: 'server.error' } }, { status: 500 })
     }
 }

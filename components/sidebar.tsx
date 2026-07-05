@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useTheme } from '@/components/theme-provider'
-import { LayoutDashboard, FolderKanban, Sun, Moon, LogOut } from 'lucide-react'
+import { FolderKanban, Sun, Moon, LogOut } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utils'

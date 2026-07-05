@@ -16,8 +16,7 @@ export async function POST() {
 
         try {
             payload = await verifyRefreshToken(token)
-        } catch (err) {
-            // clear cookie and return unauthorized response
+        } catch {
             cookieStore.delete('refreshToken')
             return NextResponse.json(
                 { error: { code: 'auth.invalid_refresh_token' } },
@@ -45,7 +44,7 @@ export async function POST() {
         })
 
         return NextResponse.json({ accessToken: newAccessToken }, { status: 200 })
-    } catch (err) {
+    } catch {
         return NextResponse.json({ error: { code: 'server.error' } }, { status: 500 })
     }
 }

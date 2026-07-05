@@ -13,6 +13,7 @@ if (!i18n.isInitialized) {
             ns: ['common'],
             defaultNS: 'common',
             interpolation: { escapeValue: false },
+            react: { useSuspense: false },
             backend: { loadPath: '/locales/{{lng}}/{{ns}}.json' },
         })
 }

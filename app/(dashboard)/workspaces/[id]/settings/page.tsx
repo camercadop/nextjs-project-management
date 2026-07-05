@@ -51,7 +51,7 @@ export default function WorkspaceSettingsPage() {
                 }
             })
             .finally(() => setLoading(false))
-    }, [id])
+    }, [id, updateForm])
 
     const onUpdate = async (data: UpdateForm) => {
         const res = await fetchAuth(`/api/workspaces/${id}`, {

@@ -1,39 +1,60 @@
 'use client'
 
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useCallback, useSyncExternalStore } from 'react'
 
-/** Supported theme values. */
 type Theme = 'light' | 'dark'
 
-/** @internal React context holding the current theme and toggle function. */
 const ThemeContext = createContext<{ theme: Theme; toggle: () => void }>({
     theme: 'light',
     toggle: () => {},
 })
 
-/** Returns the current theme and a function to toggle between light/dark. */
 export const useTheme = () => useContext(ThemeContext)
 
+/** Resolves theme from localStorage, falling back to OS preference. */
+function getTheme(): Theme {
+    const stored = localStorage.getItem('theme') as Theme | null
+    return stored ?? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+}
+
 /**
- * Provides theme context to child components.
- * Reads initial preference from localStorage or system settings.
+ * External store pattern: listeners are notified on toggle so
+ * useSyncExternalStore triggers a re-render without useState.
+ */
+const listeners = new Set<() => void>()
+
+function subscribe(cb: () => void) {
+    listeners.add(cb)
+    return () => { listeners.delete(cb) }
+}
+
+function getSnapshot(): Theme {
+    return getTheme()
+}
+
+/** SSR fallback — avoids hydration mismatch by defaulting to light. */
+function getServerSnapshot(): Theme {
+    return 'light'
+}
+
+/**
+ * Theme provider using useSyncExternalStore to avoid flash of wrong theme.
+ * This bypasses React state so the DOM class updates synchronously before paint.
  */
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-    const [theme, setTheme] = useState<Theme>(() => {
-        if (typeof window === 'undefined') return 'light'
-        const stored = localStorage.getItem('theme') as Theme | null
-        return stored ?? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
-    })
+    const theme = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
 
-    useEffect(() => {
-        document.documentElement.classList.toggle('dark', theme === 'dark')
-    }, [theme])
-
-    const toggle = () => {
-        const next = theme === 'light' ? 'dark' : 'light'
-        setTheme(next)
+    const toggle = useCallback(() => {
+        const next: Theme = getTheme() === 'light' ? 'dark' : 'light'
         localStorage.setItem('theme', next)
         document.documentElement.classList.toggle('dark', next === 'dark')
+        // Notify all useSyncExternalStore subscribers to re-render
+        listeners.forEach(cb => cb())
+    }, [])
+
+    // Keep <html> class in sync — runs during render (not an effect) to avoid FOUC
+    if (typeof window !== 'undefined') {
+        document.documentElement.classList.toggle('dark', theme === 'dark')
     }
 
     return <ThemeContext.Provider value={{ theme, toggle }}>{children}</ThemeContext.Provider>

@@ -18,7 +18,6 @@ import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Select } from '@/components/ui/select'
-import { Separator } from '@/components/ui/separator'
 import { Trash2 } from 'lucide-react'
 
 type FormData = z.infer<typeof updateIssueSchema>
@@ -69,7 +68,7 @@ export default function IssueDetailPage() {
                 }
             })
             .finally(() => setLoading(false))
-    }, [issueId])
+    }, [issueId, reset])
 
     const onSubmit = async (data: FormData) => {
         const res = await fetchAuth(`/api/issues/${issueId}`, {

@@ -42,7 +42,7 @@ export default function ProjectDetailPage() {
                 }
             })
             .finally(() => setLoading(false))
-    }, [pid])
+    }, [pid, reset])
 
     const onSubmit = async (data: FormData) => {
         const res = await fetchAuth(`/api/projects/${pid}`, {
