@@ -2,6 +2,8 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { ArrowRight } from "lucide-react"
 
+const registrationEnabled = process.env.NEXT_PUBLIC_REGISTRATION_ENABLED === 'true'
+
 export default function Home() {
   return (
     <div className="flex min-h-screen flex-col">
@@ -11,9 +13,11 @@ export default function Home() {
           <Button variant="ghost" size="sm" asChild>
             <Link href="/login">Iniciar sesión</Link>
           </Button>
-          <Button size="sm" asChild>
-            <Link href="/register">Registrarse</Link>
-          </Button>
+          {registrationEnabled && (
+            <Button size="sm" asChild>
+              <Link href="/register">Registrarse</Link>
+            </Button>
+          )}
         </nav>
       </header>
 
@@ -25,8 +29,8 @@ export default function Home() {
           Organiza workspaces, colabora con tu equipo y lleva el control de tus proyectos en una plataforma simple y rápida.
         </p>
         <Button size="lg" className="mt-8" asChild>
-          <Link href="/register">
-            Comenzar gratis
+          <Link href={registrationEnabled ? "/register" : "/login"}>
+            {registrationEnabled ? "Comenzar gratis" : "Iniciar sesión"}
             <ArrowRight className="size-4" />
           </Link>
         </Button>
