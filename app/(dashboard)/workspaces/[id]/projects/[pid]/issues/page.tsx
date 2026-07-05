@@ -11,6 +11,7 @@ import { createIssueSchema } from '@/lib/validators/issue'
 import { Spinner } from '@/components/ui/spinner'
 import { Breadcrumb } from '@/components/ui/breadcrumb'
 import { useWorkspace } from '@/components/workspace-context'
+import { Columns3 } from 'lucide-react'
 import { toast } from 'sonner'
 import { fetchAuth } from '@/lib/fetch-auth'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -20,7 +21,9 @@ import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Select } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import { cn } from '@/lib/utils'
+import { ChevronDown } from 'lucide-react'
 
 type CreateForm = z.infer<typeof createIssueSchema>
 
@@ -112,7 +115,15 @@ export default function ProjectIssuesPage() {
                 { label: 'Issues' },
             ]} />
 
-            <h1 className="text-2xl font-bold tracking-tight">{t('issue.title')}</h1>
+            <div className="flex justify-between items-center">
+                <h1 className="text-2xl font-bold tracking-tight">{t('issue.title')}</h1>
+                <Button variant="outline" size="sm" asChild>
+                    <Link href={`/workspaces/${workspaceId}/projects/${pid}/board`}>
+                        <Columns3 className="size-4" />
+                        {t('issue.board', 'Board')}
+                    </Link>
+                </Button>
+            </div>
 
             <div className="flex gap-2">
                 <Select value={filterStatus} onChange={e => setFilterStatus(e.target.value)}>
@@ -160,40 +171,49 @@ export default function ProjectIssuesPage() {
 
             <Separator />
 
-            <Card>
-                <CardHeader>
-                    <CardTitle className="text-base">{t('issue.create_title')}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <form onSubmit={handleSubmit(onCreate)} className="flex flex-col gap-4">
-                        <div className="flex flex-col gap-1.5">
-                            <Label htmlFor="issue-title">{t('issue.title_placeholder', 'Title')}</Label>
-                            <Input id="issue-title" {...register('title')} placeholder={t('issue.title_placeholder')} />
-                        </div>
-                        <div className="flex flex-col gap-1.5">
-                            <Label htmlFor="issue-desc">{t('issue.description_placeholder', 'Description')}</Label>
-                            <Textarea id="issue-desc" {...register('description')} placeholder={t('issue.description_placeholder')} rows={2} />
-                        </div>
-                        <div className="flex gap-2">
-                            <Select {...register('priority')}>
-                                <option value="LOW">{t('issue.priority_low')}</option>
-                                <option value="MEDIUM">{t('issue.priority_medium')}</option>
-                                <option value="HIGH">{t('issue.priority_high')}</option>
-                                <option value="CRITICAL">{t('issue.priority_critical')}</option>
-                            </Select>
-                            <Select {...register('status')}>
-                                <option value="BACKLOG">{t('issue.status_backlog')}</option>
-                                <option value="TODO">{t('issue.status_todo')}</option>
-                                <option value="IN_PROGRESS">{t('issue.status_in_progress')}</option>
-                                <option value="DONE">{t('issue.status_done')}</option>
-                            </Select>
-                        </div>
-                        <Button type="submit" className="self-start">
-                            {t('issue.create_button')}
-                        </Button>
-                    </form>
-                </CardContent>
-            </Card>
+            <Collapsible>
+                <Card>
+                    <CollapsibleTrigger asChild>
+                        <CardHeader className="cursor-pointer">
+                            <CardTitle className="text-base flex items-center justify-between">
+                                {t('issue.create_title')}
+                                <ChevronDown className="size-4 transition-transform [[data-state=open]>&]:rotate-180" />
+                            </CardTitle>
+                        </CardHeader>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent>
+                        <CardContent>
+                            <form onSubmit={handleSubmit(onCreate)} className="flex flex-col gap-4">
+                                <div className="flex flex-col gap-1.5">
+                                    <Label htmlFor="issue-title">{t('issue.title_placeholder', 'Title')}</Label>
+                                    <Input id="issue-title" {...register('title')} placeholder={t('issue.title_placeholder')} />
+                                </div>
+                                <div className="flex flex-col gap-1.5">
+                                    <Label htmlFor="issue-desc">{t('issue.description_placeholder', 'Description')}</Label>
+                                    <Textarea id="issue-desc" {...register('description')} placeholder={t('issue.description_placeholder')} rows={2} />
+                                </div>
+                                <div className="flex gap-2">
+                                    <Select {...register('priority')}>
+                                        <option value="LOW">{t('issue.priority_low')}</option>
+                                        <option value="MEDIUM">{t('issue.priority_medium')}</option>
+                                        <option value="HIGH">{t('issue.priority_high')}</option>
+                                        <option value="CRITICAL">{t('issue.priority_critical')}</option>
+                                    </Select>
+                                    <Select {...register('status')}>
+                                        <option value="BACKLOG">{t('issue.status_backlog')}</option>
+                                        <option value="TODO">{t('issue.status_todo')}</option>
+                                        <option value="IN_PROGRESS">{t('issue.status_in_progress')}</option>
+                                        <option value="DONE">{t('issue.status_done')}</option>
+                                    </Select>
+                                </div>
+                                <Button type="submit" className="self-start">
+                                    {t('issue.create_button')}
+                                </Button>
+                            </form>
+                        </CardContent>
+                    </CollapsibleContent>
+                </Card>
+            </Collapsible>
         </div>
     )
 }

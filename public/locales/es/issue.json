@@ -31,5 +31,6 @@
   "issue.priority_low": "Baja",
   "issue.priority_medium": "Media",
   "issue.priority_high": "Alta",
-  "issue.priority_critical": "Crítica"
+  "issue.priority_critical": "Crítica",
+  "issue.board": "Tablero"
 }

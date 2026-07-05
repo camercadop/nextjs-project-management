@@ -18,7 +18,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
-import { Bug } from 'lucide-react'
+import { Bug, Columns3 } from 'lucide-react'
 
 type FormData = z.infer<typeof updateProjectSchema>
 
@@ -66,12 +66,20 @@ export default function ProjectDetailPage() {
 
             <div className="flex justify-between items-center">
                 <h1 className="text-2xl font-bold tracking-tight">{t('project.detail_title')}</h1>
-                <Button variant="outline" size="sm" asChild>
-                    <Link href={`/workspaces/${workspaceId}/projects/${pid}/issues`}>
-                        <Bug className="size-4" />
-                        Issues
-                    </Link>
-                </Button>
+                <div className="flex gap-2">
+                    <Button variant="outline" size="sm" asChild>
+                        <Link href={`/workspaces/${workspaceId}/projects/${pid}/issues`}>
+                            <Bug className="size-4" />
+                            Issues
+                        </Link>
+                    </Button>
+                    <Button variant="outline" size="sm" asChild>
+                        <Link href={`/workspaces/${workspaceId}/projects/${pid}/board`}>
+                            <Columns3 className="size-4" />
+                            Board
+                        </Link>
+                    </Button>
+                </div>
             </div>
 
             <Card>

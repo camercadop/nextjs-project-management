@@ -10,6 +10,7 @@
     "test": "vitest"
   },
   "dependencies": {
+    "@hello-pangea/dnd": "^18.0.1",
     "@hookform/resolvers": "^5.4.0",
     "@libsql/client": "^0.17.3",
     "@prisma/adapter-pg": "^7.8.0",
