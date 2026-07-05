@@ -6,5 +6,13 @@
   "dashboard.closed": "Closed",
   "dashboard.by_status": "Issues by Status",
   "dashboard.by_assignee": "Issues by Assignee",
-  "dashboard.no_assigned": "No assigned issues"
+  "dashboard.no_assigned": "No assigned issues",
+  "dashboard.activity_title": "Recent Activity",
+  "dashboard.activity_empty": "No recent activity",
+  "dashboard.activity_project_created": "created project \"{{name}}\"",
+  "dashboard.activity_project_updated": "updated project \"{{name}}\"",
+  "dashboard.activity_project_archived": "archived project \"{{name}}\"",
+  "dashboard.activity_issue_created": "created issue \"{{name}}\"",
+  "dashboard.activity_issue_status_changed": "moved \"{{name}}\" to {{status}}",
+  "dashboard.activity_issue_assignee_changed": "reassigned issue \"{{name}}\""
 }

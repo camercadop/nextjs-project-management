@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { authMiddleware } from '@/lib/middleware/auth'
 import { getWorkspaceMember } from '@/lib/middleware/workspace'
 import { updateProjectSchema } from '@/lib/validators/project'
+import { recordActivity } from '@/lib/activity'
 
 /**
  * Retrieves a project by ID if the user is a member of its workspace.
@@ -53,6 +54,13 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     const updated = await prisma.project.update({
         where: { id },
         data: parsed.data,
+    })
+
+    await recordActivity({
+        type: 'PROJECT_UPDATED',
+        userId: auth.user.id,
+        workspaceId: project.workspaceId,
+        metadata: { projectId: id, projectName: updated.name },
     })
 
     return NextResponse.json({ ok: true, project: updated })

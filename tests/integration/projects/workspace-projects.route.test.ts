@@ -1,6 +1,7 @@
 vi.mock('@/lib/prisma', () => ({
     prisma: {
         project: { create: vi.fn(), findMany: vi.fn() },
+        activityEvent: { create: vi.fn() },
     },
 }))
 

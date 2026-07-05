@@ -6,5 +6,13 @@
   "dashboard.closed": "Cerradas",
   "dashboard.by_status": "Issues por Estado",
   "dashboard.by_assignee": "Issues por Responsable",
-  "dashboard.no_assigned": "Sin issues asignadas"
+  "dashboard.no_assigned": "Sin issues asignadas",
+  "dashboard.activity_title": "Actividad Reciente",
+  "dashboard.activity_empty": "Sin actividad reciente",
+  "dashboard.activity_project_created": "creó el proyecto \"{{name}}\"",
+  "dashboard.activity_project_updated": "editó el proyecto \"{{name}}\"",
+  "dashboard.activity_project_archived": "archivó el proyecto \"{{name}}\"",
+  "dashboard.activity_issue_created": "creó la issue \"{{name}}\"",
+  "dashboard.activity_issue_status_changed": "movió \"{{name}}\" a {{status}}",
+  "dashboard.activity_issue_assignee_changed": "reasignó la issue \"{{name}}\""
 }

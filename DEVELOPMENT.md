@@ -89,6 +89,63 @@ docs/
 - **Styling:** Tailwind CSS 4 + shadcn/ui components
 - **Testing:** Integration tests with Vitest in `tests/integration/`
 
+## Documentation & Code Style
+
+### Naming
+
+- `kebab-case` for files
+- `PascalCase` for React components
+- `camelCase` for utilities/functions
+
+### Formatting
+
+- Indentation: 4 spaces, no tabs
+- Line length: ≤100 characters
+- Quotes: Single quotes for strings (except JSON)
+- Trailing commas in multiline objects/arrays
+- Blank lines to separate logical sections
+- Imports grouped in order: external modules → absolute aliased imports → relative imports; alphabetical within groups
+- Prefer named exports; default export only for single-component modules
+- Run `npm run lint` before committing
+
+### JSDoc Rules
+
+1. **Every exported function, class, and type** must have a JSDoc block directly above the declaration.
+2. **JSDoc must include:**
+   - A brief one-line description of what it does.
+   - `@param` tag for each parameter with description.
+   - `@returns` tag describing the return value.
+   - `@throws` tag if the function can throw (describe when/why).
+3. **No empty lines** between the JSDoc block and the declaration.
+4. **Separate** each JSDoc block from surrounding code with a blank line above.
+5. Prefer **type inference** where possible, but be explicit for public API.
+
+### Comments
+
+- Inline comments only when the logic is non-obvious. Do not restate what the code already says.
+- React components: Document props via JSDoc on the component function or a dedicated `Props` type/interface.
+- Constants and config objects: Add a brief JSDoc comment explaining purpose if not self-evident from the name.
+- Zod schemas: Add a comment above the schema describing what it validates and where it's used.
+
+### Markdown (docs, READMEs)
+
+- Use GitHub Flavored Markdown
+- Headings hierarchy: `#` (title), `##` (section), `###` (sub-section)
+- Write in active voice, present tense
+- Use bullet points for lists; avoid excessive nesting
+- Include code fences with language identifiers for all snippets
+
+### Documentation Structure
+
+| Section | File/Location | Description |
+|---|---|---|
+| Project Overview | `README.md` | High-level description, links to demo, quick start |
+| Architecture | `docs/ARCHITECTURE.md` | C4 diagrams, key components, data flow |
+| Development | `DEVELOPMENT.md` | Setup, scripts, conventions, code style |
+| ERD | `docs/ERD.md` | Entity-relationship diagram and model descriptions |
+| Testing | `TESTING.md` | Testing strategy, structure, best practices |
+| Page Development | `PAGE_DEVELOPMENT.md` | Patterns for App Router page development |
+
 ## i18n Usage
 
 Translation files live in `public/locales/{lng}/{namespace}.json`.

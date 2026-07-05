@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { authMiddleware } from '@/lib/middleware/auth'
 import { getWorkspaceMember } from '@/lib/middleware/workspace'
 import { createIssueSchema } from '@/lib/validators/issue'
+import { recordActivity } from '@/lib/activity'
 
 // GET /api/projects/:id/issues — List issues (with optional filters)
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -63,6 +64,13 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     const issue = await prisma.issue.create({
         data: { ...parsed.data, projectId },
         include: { assignee: { select: { id: true, email: true } } },
+    })
+
+    await recordActivity({
+        type: 'ISSUE_CREATED',
+        userId: auth.user.id,
+        workspaceId: project.workspaceId,
+        metadata: { issueId: issue.id, issueTitle: issue.title, projectId },
     })
 
     return NextResponse.json({ ok: true, issue }, { status: 201 })

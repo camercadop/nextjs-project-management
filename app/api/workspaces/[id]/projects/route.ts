@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { authMiddleware } from '@/lib/middleware/auth'
 import { getWorkspaceMember } from '@/lib/middleware/workspace'
 import { createProjectSchema } from '@/lib/validators/project'
+import { recordActivity } from '@/lib/activity'
 
 // POST /api/workspaces/:id/projects — Create project
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -22,6 +23,13 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
     const project = await prisma.project.create({
         data: { ...parsed.data, workspaceId: id },
+    })
+
+    await recordActivity({
+        type: 'PROJECT_CREATED',
+        userId: auth.user.id,
+        workspaceId: id,
+        metadata: { projectId: project.id, projectName: project.name },
     })
 
     return NextResponse.json({ ok: true, project }, { status: 201 })

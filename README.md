@@ -187,7 +187,6 @@ sequenceDiagram
 |----------|-------------|
 | [Architecture](docs/ARCHITECTURE.md) | System architecture, C4 diagrams, auth flows, and technical decisions |
 | [ERD](docs/ERD.md) | Entity-relationship diagram, model descriptions, and constraints |
-| [Development](DEVELOPMENT.md) | Setup guide, scripts, conventions, and project structure |
+| [Development](DEVELOPMENT.md) | Setup guide, scripts, conventions, code style, and documentation rules |
 | [Testing](TESTING.md) | Testing strategy, file structure, and best practices |
 | [Page Development](PAGE_DEVELOPMENT.md) | Patterns for page development with App Router |
-| [Documentation Guidelines](DOCUMENTATION_GUIDELINES.md) | Documentation conventions and code style |

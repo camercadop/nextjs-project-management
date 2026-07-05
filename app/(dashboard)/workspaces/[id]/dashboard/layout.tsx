@@ -6,11 +6,13 @@ export default function DashboardLayout({
     stats,
     charts,
     assignees,
+    activity,
 }: {
     children: React.ReactNode
     stats: React.ReactNode
     charts: React.ReactNode
     assignees: React.ReactNode
+    activity: React.ReactNode
 }) {
     return (
         <div className="flex flex-col gap-6">
@@ -20,6 +22,7 @@ export default function DashboardLayout({
                 <Suspense fallback={<Spinner />}>{charts}</Suspense>
                 <Suspense fallback={<Spinner />}>{assignees}</Suspense>
             </div>
+            <Suspense fallback={<Spinner />}>{activity}</Suspense>
         </div>
     )
 }

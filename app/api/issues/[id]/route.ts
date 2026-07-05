@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { authMiddleware } from '@/lib/middleware/auth'
 import { getWorkspaceMember } from '@/lib/middleware/workspace'
 import { updateIssueSchema } from '@/lib/validators/issue'
+import { recordActivity } from '@/lib/activity'
 
 async function getIssueWithAccess(userId: string, issueId: string) {
     const issue = await prisma.issue.findUnique({
@@ -75,6 +76,27 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
             ? [prisma.issueHistory.createMany({ data: historyEntries })]
             : []),
     ])
+
+    // Record activity for status and assignee changes
+    const statusChange = historyEntries.find(e => e.field === 'status')
+    const assigneeChange = historyEntries.find(e => e.field === 'assigneeId')
+
+    if (statusChange) {
+        await recordActivity({
+            type: 'ISSUE_STATUS_CHANGED',
+            userId: auth.user.id,
+            workspaceId: issue.project.workspaceId,
+            metadata: { issueId: id, issueTitle: issue.title, oldStatus: statusChange.oldValue, newStatus: statusChange.newValue },
+        })
+    }
+    if (assigneeChange) {
+        await recordActivity({
+            type: 'ISSUE_ASSIGNEE_CHANGED',
+            userId: auth.user.id,
+            workspaceId: issue.project.workspaceId,
+            metadata: { issueId: id, issueTitle: issue.title, newAssigneeId: assigneeChange.newValue },
+        })
+    }
 
     return NextResponse.json({ ok: true, issue: updated })
 }
