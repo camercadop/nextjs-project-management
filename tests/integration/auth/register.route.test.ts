@@ -9,6 +9,14 @@ vi.mock('@/lib/auth', () => ({
 import { POST } from '@/app/api/auth/register/route'
 import { prisma } from '@/lib/prisma'
 
+beforeAll(() => {
+    process.env.NEXT_PUBLIC_REGISTRATION_ENABLED = 'true'
+})
+
+afterAll(() => {
+    delete process.env.NEXT_PUBLIC_REGISTRATION_ENABLED
+})
+
 function makeRequest(body: unknown) {
     return new Request('http://localhost/api/auth/register', {
         method: 'POST',

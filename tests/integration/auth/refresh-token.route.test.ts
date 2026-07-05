@@ -1,8 +1,9 @@
 const mockCookieGet = vi.fn()
 const mockCookieDelete = vi.fn()
+const mockCookieSet = vi.fn()
 
 vi.mock('next/headers', () => ({
-    cookies: vi.fn(() => Promise.resolve({ get: mockCookieGet, delete: mockCookieDelete })),
+    cookies: vi.fn(() => Promise.resolve({ get: mockCookieGet, delete: mockCookieDelete, set: mockCookieSet })),
 }))
 
 vi.mock('@/lib/prisma', () => ({
@@ -11,7 +12,7 @@ vi.mock('@/lib/prisma', () => ({
 
 vi.mock('@/lib/auth', () => ({
     verifyRefreshToken: vi.fn(),
-    signAccessToken: vi.fn(() => 'new-access-token'),
+    signAccessToken: vi.fn(() => Promise.resolve('new-access-token')),
 }))
 
 import { POST } from '@/app/api/auth/refresh-token/route'
@@ -47,7 +48,7 @@ describe('POST /api/auth/refresh-token', () => {
 
     it('should return 404 and clear cookie if user not found', async () => {
         mockCookieGet.mockReturnValue({ value: 'valid-token' })
-        vi.mocked(verifyRefreshToken).mockReturnValue({ userId: 'no-exist', email: 'a@b.com' })
+        vi.mocked(verifyRefreshToken).mockResolvedValue({ userId: 'no-exist', email: 'a@b.com' })
         vi.mocked(prisma.user.findUnique).mockResolvedValue(null)
 
         const res = await POST()
@@ -59,7 +60,7 @@ describe('POST /api/auth/refresh-token', () => {
 
     it('should return 200 with new access token on valid refresh', async () => {
         mockCookieGet.mockReturnValue({ value: 'valid-token' })
-        vi.mocked(verifyRefreshToken).mockReturnValue({ userId: '1', email: 'test@test.com' })
+        vi.mocked(verifyRefreshToken).mockResolvedValue({ userId: '1', email: 'test@test.com' })
         vi.mocked(prisma.user.findUnique).mockResolvedValue({
             id: '1',
             email: 'test@test.com',

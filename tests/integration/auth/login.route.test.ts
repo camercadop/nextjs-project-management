@@ -80,7 +80,7 @@ describe('POST /api/auth/login', () => {
 
 describe('parseMaxAgeSeconds (via cookie maxAge)', () => {
     beforeEach(() => {
-        vi.clearAllMocks()
+        vi.resetAllMocks()
 
         vi.mocked(prisma.user.findUnique).mockResolvedValue({
             id: '1',
@@ -95,53 +95,64 @@ describe('parseMaxAgeSeconds (via cookie maxAge)', () => {
     it('defaults to 7d when env is unset', async () => {
         delete process.env.JWT_REFRESH_EXPIRES_IN
         await POST(makeRequest(REQUEST_BODY))
-        expect(mockCookieSet).toHaveBeenCalled()
-        expect(mockCookieSet).toHaveBeenCalledWith(
-            expect.objectContaining({ maxAge: 7 * 24 * 60 * 60 })
+        expect(mockCookieSet).toHaveBeenCalledTimes(2)
+        expect(mockCookieSet).toHaveBeenNthCalledWith(
+            2,
+            expect.objectContaining({ name: 'refreshToken', maxAge: 7 * 24 * 60 * 60 })
         )
     })
 
     it('parses plain number as seconds', async () => {
         process.env.JWT_REFRESH_EXPIRES_IN = '3600'
         await POST(makeRequest(REQUEST_BODY))
-        expect(mockCookieSet).toHaveBeenCalledWith(expect.objectContaining({ maxAge: 3600 }))
+        expect(mockCookieSet).toHaveBeenNthCalledWith(
+            2,
+            expect.objectContaining({ name: 'refreshToken', maxAge: 3600 })
+        )
     })
 
     it('parses "d" suffix as days', async () => {
         process.env.JWT_REFRESH_EXPIRES_IN = '2d'
         await POST(makeRequest(REQUEST_BODY))
-        expect(mockCookieSet).toHaveBeenCalledWith(
-            expect.objectContaining({ maxAge: 2 * 24 * 60 * 60 })
+        expect(mockCookieSet).toHaveBeenNthCalledWith(
+            2,
+            expect.objectContaining({ name: 'refreshToken', maxAge: 2 * 24 * 60 * 60 })
         )
     })
 
     it('parses "h" suffix as hours', async () => {
         process.env.JWT_REFRESH_EXPIRES_IN = '12h'
         await POST(makeRequest(REQUEST_BODY))
-        expect(mockCookieSet).toHaveBeenCalledWith(
-            expect.objectContaining({ maxAge: 12 * 60 * 60 })
+        expect(mockCookieSet).toHaveBeenNthCalledWith(
+            2,
+            expect.objectContaining({ name: 'refreshToken', maxAge: 12 * 60 * 60 })
         )
     })
 
     it('parses "m" suffix as minutes', async () => {
         process.env.JWT_REFRESH_EXPIRES_IN = '30m'
         await POST(makeRequest(REQUEST_BODY))
-        expect(mockCookieSet).toHaveBeenCalledWith(expect.objectContaining({ maxAge: 30 * 60 }))
+        expect(mockCookieSet).toHaveBeenNthCalledWith(
+            2,
+            expect.objectContaining({ name: 'refreshToken', maxAge: 30 * 60 })
+        )
     })
 
     it('fall back to 7d for unrecognized suffix', async () => {
         process.env.JWT_REFRESH_EXPIRES_IN = '30z'
         await POST(makeRequest(REQUEST_BODY))
-        expect(mockCookieSet).toHaveBeenCalledWith(
-            expect.objectContaining({ maxAge: 7 * 24 * 60 * 60 })
+        expect(mockCookieSet).toHaveBeenNthCalledWith(
+            2,
+            expect.objectContaining({ name: 'refreshToken', maxAge: 7 * 24 * 60 * 60 })
         )
     })
 
     it('falls back to 7d for unrecognized format', async () => {
         process.env.JWT_REFRESH_EXPIRES_IN = 'invalid'
         await POST(makeRequest(REQUEST_BODY))
-        expect(mockCookieSet).toHaveBeenCalledWith(
-            expect.objectContaining({ maxAge: 7 * 24 * 60 * 60 })
+        expect(mockCookieSet).toHaveBeenNthCalledWith(
+            2,
+            expect.objectContaining({ name: 'refreshToken', maxAge: 7 * 24 * 60 * 60 })
         )
     })
 })
