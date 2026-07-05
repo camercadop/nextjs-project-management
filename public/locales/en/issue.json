@@ -32,5 +32,7 @@
   "issue.priority_medium": "Medium",
   "issue.priority_high": "High",
   "issue.priority_critical": "Critical",
-  "issue.board": "Board"
+  "issue.board": "Board",
+  "issue.count_one": "{{count}} issue",
+  "issue.count_other": "{{count}} issues"
 }

@@ -100,7 +100,7 @@ export default function WorkspaceSettingsPage() {
                 <CardContent>
                     <form onSubmit={updateForm.handleSubmit(onUpdate)} className="flex flex-col gap-4">
                         <div className="flex flex-col gap-1.5">
-                            <Label htmlFor="ws-name">{t('workspace.name_placeholder', 'Name')}</Label>
+                            <Label htmlFor="ws-name">{t('workspace.name_placeholder', 'Name')} <span className="text-destructive">*</span></Label>
                             <Input id="ws-name" {...updateForm.register('name')} />
                         </div>
                         <div className="flex flex-col gap-1.5">

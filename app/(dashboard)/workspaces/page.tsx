@@ -3,12 +3,21 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
 import { useTranslation } from 'react-i18next'
 import { Spinner } from '@/components/ui/spinner'
 import { fetchAuth } from '@/lib/fetch-auth'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { Label } from '@/components/ui/label'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Plus, FolderKanban, Settings, ArrowRight, Layers } from 'lucide-react'
+import { createWorkspaceSchema } from '@/lib/validators/workspace'
+import { toast } from 'sonner'
 
 interface Workspace {
     id: string
@@ -21,15 +30,42 @@ export default function WorkspacesPage() {
     const router = useRouter()
     const [workspaces, setWorkspaces] = useState<Workspace[]>([])
     const [loading, setLoading] = useState(true)
+    const [open, setOpen] = useState(false)
+
+    type FormData = z.infer<typeof createWorkspaceSchema>
+    const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<FormData>({
+        resolver: zodResolver(createWorkspaceSchema),
+    })
+
+    const fetchWorkspaces = () => {
+        fetchAuth('/api/workspaces')
+            .then(res => res.json())
+            .then(data => { if (data.ok) setWorkspaces(data.workspaces) })
+    }
 
     useEffect(() => {
         fetchAuth('/api/workspaces')
             .then(res => res.json())
-            .then(data => {
-                if (data.ok) setWorkspaces(data.workspaces)
-            })
+            .then(data => { if (data.ok) setWorkspaces(data.workspaces) })
             .finally(() => setLoading(false))
     }, [])
+
+    const onCreate = async (data: FormData) => {
+        const res = await fetchAuth('/api/workspaces', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        })
+        const json = await res.json()
+        if (json.ok) {
+            toast.success(t('workspace.created'))
+            reset()
+            setOpen(false)
+            fetchWorkspaces()
+        } else {
+            toast.error(json.error?.code || t('workspace.create_error'))
+        }
+    }
 
     if (!ready) return <Spinner />
 
@@ -42,11 +78,9 @@ export default function WorkspacesPage() {
                         {t('workspace.subtitle', 'Manage your team workspaces')}
                     </p>
                 </div>
-                <Button asChild>
-                    <Link href="/workspaces/new">
-                        <Plus className="size-4" />
-                        {t('workspace.create_button')}
-                    </Link>
+                <Button onClick={() => setOpen(true)}>
+                    <Plus className="size-4" />
+                    {t('workspace.create_button')}
                 </Button>
             </div>
             {loading ? (
@@ -56,11 +90,9 @@ export default function WorkspacesPage() {
                     <CardContent className="py-16 flex flex-col items-center gap-3 text-center">
                         <Layers className="size-10 text-muted-foreground/50" />
                         <p className="text-muted-foreground">{t('workspace.empty')}</p>
-                        <Button asChild size="sm" className="mt-2">
-                            <Link href="/workspaces/new">
-                                <Plus className="size-4" />
-                                {t('workspace.create_button')}
-                            </Link>
+                        <Button size="sm" className="mt-2" onClick={() => setOpen(true)}>
+                            <Plus className="size-4" />
+                            {t('workspace.create_button')}
                         </Button>
                     </CardContent>
                 </Card>
@@ -104,6 +136,27 @@ export default function WorkspacesPage() {
                     ))}
                 </div>
             )}
+            <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) reset() }}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>{t('workspace.create_title')}</DialogTitle>
+                    </DialogHeader>
+                    <form onSubmit={handleSubmit(onCreate)} className="flex flex-col gap-4">
+                        <div className="flex flex-col gap-1.5">
+                            <Label htmlFor="ws-name">{t('workspace.name_placeholder', 'Name')} <span className="text-destructive">*</span></Label>
+                            <Input id="ws-name" {...register('name')} placeholder={t('workspace.name_placeholder')} />
+                            {errors.name && <span className="text-destructive text-xs">{errors.name.message}</span>}
+                        </div>
+                        <div className="flex flex-col gap-1.5">
+                            <Label htmlFor="ws-desc">{t('workspace.description_placeholder', 'Description')}</Label>
+                            <Textarea id="ws-desc" {...register('description')} placeholder={t('workspace.description_placeholder')} rows={3} />
+                        </div>
+                        <Button type="submit" disabled={isSubmitting}>
+                            {t('workspace.create_button')}
+                        </Button>
+                    </form>
+                </DialogContent>
+            </Dialog>
         </div>
     )
 }

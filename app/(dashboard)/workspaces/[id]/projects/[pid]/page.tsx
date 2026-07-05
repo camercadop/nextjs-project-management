@@ -89,7 +89,7 @@ export default function ProjectDetailPage() {
                 <CardContent>
                     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
                         <div className="flex flex-col gap-1.5">
-                            <Label htmlFor="name">{t('project.name_placeholder', 'Name')}</Label>
+                            <Label htmlFor="name">{t('project.name_placeholder', 'Name')} <span className="text-destructive">*</span></Label>
                             <Input id="name" {...register('name')} />
                         </div>
                         <div className="flex flex-col gap-1.5">

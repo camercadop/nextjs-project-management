@@ -16,5 +16,7 @@
   "project.updated": "Project updated",
   "project.update_error": "Failed to update project",
   "project.archived": "Project archived",
-  "project.archive_error": "Failed to archive project"
+  "project.archive_error": "Failed to archive project",
+  "project.count_one": "{{count}} project",
+  "project.count_other": "{{count}} projects"
 }

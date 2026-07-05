@@ -114,7 +114,7 @@ export default function IssueDetailPage() {
                 <CardContent>
                     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
                         <div className="flex flex-col gap-1.5">
-                            <Label htmlFor="title">{t('issue.title_placeholder', 'Title')}</Label>
+                            <Label htmlFor="title">{t('issue.title_placeholder', 'Title')} <span className="text-destructive">*</span></Label>
                             <Input id="title" {...register('title')} />
                         </div>
                         <div className="flex flex-col gap-1.5">
@@ -125,19 +125,19 @@ export default function IssueDetailPage() {
                             <div className="flex flex-col gap-1.5 flex-1">
                                 <Label>{t('issue.status', 'Status')}</Label>
                                 <Select {...register('status')}>
-                                    <option value="BACKLOG">Backlog</option>
-                                    <option value="TODO">Todo</option>
-                                    <option value="IN_PROGRESS">In Progress</option>
-                                    <option value="DONE">Done</option>
+                                    <option value="BACKLOG">{t('issue.status_backlog')}</option>
+                                    <option value="TODO">{t('issue.status_todo')}</option>
+                                    <option value="IN_PROGRESS">{t('issue.status_in_progress')}</option>
+                                    <option value="DONE">{t('issue.status_done')}</option>
                                 </Select>
                             </div>
                             <div className="flex flex-col gap-1.5 flex-1">
                                 <Label>{t('issue.priority', 'Priority')}</Label>
                                 <Select {...register('priority')}>
-                                    <option value="LOW">Low</option>
-                                    <option value="MEDIUM">Medium</option>
-                                    <option value="HIGH">High</option>
-                                    <option value="CRITICAL">Critical</option>
+                                    <option value="LOW">{t('issue.priority_low')}</option>
+                                    <option value="MEDIUM">{t('issue.priority_medium')}</option>
+                                    <option value="HIGH">{t('issue.priority_high')}</option>
+                                    <option value="CRITICAL">{t('issue.priority_critical')}</option>
                                 </Select>
                             </div>
                         </div>
@@ -160,25 +160,23 @@ export default function IssueDetailPage() {
                     {history.length === 0 ? (
                         <p className="text-muted-foreground text-sm">{t('issue.history_empty')}</p>
                     ) : (
-                        <ul className="flex flex-col gap-2">
+                        <ol className="relative border-l border-border ml-2">
                             {history.map(entry => (
-                                <li key={entry.id} className="flex items-start gap-2 text-sm">
-                                    <div className="mt-1.5 size-2 rounded-full bg-muted-foreground/40 shrink-0" />
-                                    <div>
-                                        <span className="text-foreground">
-                                            {t('issue.history_entry', {
-                                                field: entry.field,
-                                                oldValue: entry.oldValue ?? '-',
-                                                newValue: entry.newValue ?? '-',
-                                            })}
-                                        </span>
-                                        <span className="ml-2 text-xs text-muted-foreground">
-                                            {new Date(entry.createdAt).toLocaleString()}
-                                        </span>
-                                    </div>
+                                <li key={entry.id} className="mb-6 last:mb-0 ml-4">
+                                    <div className="absolute -left-1.5 mt-1.5 size-3 rounded-full border-2 border-background bg-primary" />
+                                    <time className="text-xs text-muted-foreground">
+                                        {new Date(entry.createdAt).toLocaleString()}
+                                    </time>
+                                    <p className="text-sm text-foreground mt-0.5">
+                                        {t('issue.history_entry', {
+                                            field: entry.field,
+                                            oldValue: entry.oldValue ?? '-',
+                                            newValue: entry.newValue ?? '-',
+                                        })}
+                                    </p>
                                 </li>
                             ))}
-                        </ul>
+                        </ol>
                     )}
                 </CardContent>
             </Card>

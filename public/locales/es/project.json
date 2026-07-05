@@ -16,5 +16,7 @@
   "project.updated": "Proyecto actualizado",
   "project.update_error": "Error al actualizar el proyecto",
   "project.archived": "Proyecto archivado",
-  "project.archive_error": "Error al archivar el proyecto"
+  "project.archive_error": "Error al archivar el proyecto",
+  "project.count_one": "{{count}} proyecto",
+  "project.count_other": "{{count}} proyectos"
 }
