@@ -5,6 +5,10 @@ import { registerSchema } from '@/lib/validators/auth'
 
 export async function POST(req: Request) {
     try {
+        if (process.env.NEXT_PUBLIC_REGISTRATION_ENABLED !== 'true') {
+            return NextResponse.json({ error: { code: 'auth.registration_disabled' } }, { status: 403 })
+        }
+
         const parsed = registerSchema.safeParse(await req.json())
         if (!parsed.success) {
             return NextResponse.json(

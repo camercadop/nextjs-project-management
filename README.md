@@ -2,6 +2,8 @@
 
 SaaS project management platform for small and medium teams, built with Next.js 16.
 
+🚀 **Demo:** [https://nextjs-project-management-desarrollador7backend.vercel.app](https://nextjs-project-management-desarrollador7backend.vercel.app/)
+
 ## Tech Stack
 
 - **Framework:** Next.js 16 (App Router)
@@ -60,6 +62,7 @@ Copy `.env` and configure as needed:
 | `GMAIL_PASS` | Gmail app password |
 | `NEXT_PUBLIC_DEFAULT_LOCALE` | Default language (`es`) |
 | `NEXT_PUBLIC_SUPPORTED_LOCALES` | Supported languages (`es,en`) |
+| `NEXT_PUBLIC_REGISTRATION_ENABLED` | Enable user registration (`true` / `false`) |
 
 ### Development
 

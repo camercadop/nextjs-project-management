@@ -6,7 +6,7 @@ import { z } from 'zod'
 import Link from 'next/link'
 import { registerSchema } from '@/lib/validators/auth'
 import { useTranslation } from 'react-i18next'
-import { useRouter } from 'next/navigation'
+import { useRouter, redirect } from 'next/navigation'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
@@ -15,9 +15,12 @@ import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { UserPlus } from 'lucide-react'
 
+const registrationEnabled = process.env.NEXT_PUBLIC_REGISTRATION_ENABLED === 'true'
+
 type RegisterForm = z.infer<typeof registerSchema>
 
 export default function RegisterPage() {
+    if (!registrationEnabled) redirect('/login')
     const {
         register,
         handleSubmit,

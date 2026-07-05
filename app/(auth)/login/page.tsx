@@ -86,9 +86,11 @@ export default function LoginPage() {
                             : t('auth.login_button', 'Login')}
                     </Button>
                     <div className="flex justify-between text-sm text-muted-foreground pt-2">
-                        <Link href="/register" className="hover:text-foreground transition-colors">
-                            {t('auth.link_register')}
-                        </Link>
+                        {process.env.NEXT_PUBLIC_REGISTRATION_ENABLED === 'true' && (
+                            <Link href="/register" className="hover:text-foreground transition-colors">
+                                {t('auth.link_register')}
+                            </Link>
+                        )}
                         <Link
                             href="/forgot-password"
                             className="hover:text-foreground transition-colors"
