@@ -24,7 +24,7 @@ function makeRequest(method: string, body?: unknown) {
     return new Request('http://localhost/api/projects/p1', {
         method,
         headers: { 'Content-Type': 'application/json' },
-        ...(body && { body: JSON.stringify(body) }),
+        ...(body ? { body: JSON.stringify(body) } : {}),
     })
 }
 

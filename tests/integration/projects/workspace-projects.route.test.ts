@@ -23,7 +23,7 @@ function makeRequest(body?: unknown, query = '') {
     return new Request(`http://localhost/api/workspaces/w1/projects${query}`, {
         method: body ? 'POST' : 'GET',
         headers: { 'Content-Type': 'application/json' },
-        ...(body && { body: JSON.stringify(body) }),
+        ...(body ? { body: JSON.stringify(body) } : {}),
     })
 }
 
