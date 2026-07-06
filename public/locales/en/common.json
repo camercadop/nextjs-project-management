@@ -10,5 +10,13 @@
   "confirm": "Confirm",
   "search": "Search",
   "no_results": "No results",
-  "close": "Close"
+  "close": "Close",
+  "dark_mode": "Dark mode",
+  "light_mode": "Light mode",
+  "logout": "Logout",
+  "landing_title": "Manage your team projects, hassle-free",
+  "landing_description": "Organize workspaces, collaborate with your team, and keep track of your projects on a simple and fast platform.",
+  "landing_login": "Sign in",
+  "landing_register": "Sign up",
+  "landing_cta": "Get started free"
 }

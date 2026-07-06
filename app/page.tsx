@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { ArrowRight } from "lucide-react"
+import { t } from "@/lib/i18n-server"
 
 const registrationEnabled = process.env.NEXT_PUBLIC_REGISTRATION_ENABLED === 'true'
 
@@ -11,11 +12,11 @@ export default function Home() {
         <span className="text-xl font-bold tracking-tight">ProjectHub</span>
         <nav className="flex items-center gap-3">
           <Button variant="ghost" size="sm" asChild>
-            <Link href="/login">Iniciar sesión</Link>
+            <Link href="/login">{t('landing_login')}</Link>
           </Button>
           {registrationEnabled && (
             <Button size="sm" asChild>
-              <Link href="/register">Registrarse</Link>
+              <Link href="/register">{t('landing_register')}</Link>
             </Button>
           )}
         </nav>
@@ -23,14 +24,14 @@ export default function Home() {
 
       <main className="flex flex-1 flex-col items-center justify-center px-8 text-center">
         <h1 className="max-w-2xl text-5xl font-bold tracking-tight">
-          Gestiona tus proyectos en equipo, sin complicaciones
+          {t('landing_title')}
         </h1>
         <p className="mt-6 max-w-lg text-lg text-muted-foreground">
-          Organiza workspaces, colabora con tu equipo y lleva el control de tus proyectos en una plataforma simple y rápida.
+          {t('landing_description')}
         </p>
         <Button size="lg" className="mt-8" asChild>
           <Link href={registrationEnabled ? "/register" : "/login"}>
-            {registrationEnabled ? "Comenzar gratis" : "Iniciar sesión"}
+            {registrationEnabled ? t('landing_cta') : t('landing_login')}
             <ArrowRight className="size-4" />
           </Link>
         </Button>

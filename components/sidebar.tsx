@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
+import { useTranslation } from 'react-i18next'
 import { useTheme } from '@/components/theme-provider'
 import { FolderKanban, Sun, Moon, LogOut } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -12,9 +13,10 @@ export function Sidebar() {
     const { theme, toggle } = useTheme()
     const router = useRouter()
     const pathname = usePathname()
+    const { t } = useTranslation('common')
 
     const navItems = [
-        { href: '/workspaces', label: 'Workspaces', icon: FolderKanban },
+        { href: '/workspaces', label: t('workspace.title', { ns: 'workspace' }), icon: FolderKanban },
     ]
 
     return (
@@ -49,7 +51,7 @@ export function Sidebar() {
             <div className="p-3 flex flex-col gap-1">
                 <Button variant="ghost" size="sm" onClick={toggle} className="justify-start gap-2.5">
                     {theme === 'light' ? <Moon className="size-4" /> : <Sun className="size-4" />}
-                    {theme === 'light' ? 'Dark mode' : 'Light mode'}
+                    {theme === 'light' ? t('dark_mode') : t('light_mode')}
                 </Button>
                 <Button
                     variant="ghost"
@@ -61,7 +63,7 @@ export function Sidebar() {
                     }}
                 >
                     <LogOut className="size-4" />
-                    Logout
+                    {t('logout')}
                 </Button>
             </div>
         </aside>

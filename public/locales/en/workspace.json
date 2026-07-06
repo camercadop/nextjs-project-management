@@ -4,6 +4,7 @@
   "workspace.name_placeholder": "Workspace name",
   "workspace.description_placeholder": "Description (optional)",
   "workspace.create_button": "Create",
+  "workspace.save_button": "Save",
   "workspace.empty": "You don't have any workspaces yet.",
   "workspace.settings_title": "Settings",
   "workspace.members_title": "Members",

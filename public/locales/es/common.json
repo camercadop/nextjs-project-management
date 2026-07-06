@@ -10,5 +10,13 @@
   "confirm": "Confirmar",
   "search": "Buscar",
   "no_results": "Sin resultados",
-  "close": "Cerrar"
+  "close": "Cerrar",
+  "dark_mode": "Modo oscuro",
+  "light_mode": "Modo claro",
+  "logout": "Cerrar sesión",
+  "landing_title": "Gestiona tus proyectos en equipo, sin complicaciones",
+  "landing_description": "Organiza workspaces, colabora con tu equipo y lleva el control de tus proyectos en una plataforma simple y rápida.",
+  "landing_login": "Iniciar sesión",
+  "landing_register": "Registrarse",
+  "landing_cta": "Comenzar gratis"
 }
