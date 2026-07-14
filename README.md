@@ -1,8 +1,14 @@
 # Next.js Project Management
 
+[![CI](https://github.com/camercadop/nextjs-project-management/actions/workflows/ci.yml/badge.svg)](https://github.com/camercadop/nextjs-project-management/actions/workflows/ci.yml)
+
 SaaS project management platform for small and medium teams, built with Next.js 16.
 
 🚀 **Demo:** [https://nextjs-project-management-desarrollador7backend.vercel.app](https://nextjs-project-management-desarrollador7backend.vercel.app/)
+
+## Motivation
+
+Built as a full-stack reference project demonstrating production-grade patterns with Next.js 16: JWT authentication with refresh token rotation, role-based access control, timing attack protection, 2FA, and a layered architecture with clear separation of concerns.
 
 ## Tech Stack
 
@@ -181,6 +187,28 @@ sequenceDiagram
 
 ---
 
+## CI/CD
+
+The project uses GitHub Actions for continuous integration. The workflow runs on every push and pull request to `main`.
+
+**Pipeline steps:**
+
+1. Checkout code
+2. Setup Node.js 24 with npm cache
+3. Install dependencies (`npm ci`)
+4. Run database migrations (`prisma migrate deploy`)
+5. Lint (`npm run lint`)
+6. Build (`npm run build`)
+7. Test (`npm test`)
+
+**Services:**
+
+- PostgreSQL 16 (service container for integration tests)
+
+Workflow file: [`.github/workflows/ci.yml`](.github/workflows/ci.yml)
+
+---
+
 ## Documentation
 
 | Document | Description |
@@ -191,3 +219,7 @@ sequenceDiagram
 | [Testing](TESTING.md) | Testing strategy, file structure, and best practices |
 | [Page Development](PAGE_DEVELOPMENT.md) | Patterns for page development with App Router |
 | [How-To Guides](docs/guides/) | Step-by-step guides for common development tasks |
+
+## License
+
+This project is licensed under the Apache License 2.0. See [LICENSE](LICENSE) for details.
