@@ -190,3 +190,4 @@ sequenceDiagram
 | [Development](DEVELOPMENT.md) | Setup guide, scripts, conventions, code style, and documentation rules |
 | [Testing](TESTING.md) | Testing strategy, file structure, and best practices |
 | [Page Development](PAGE_DEVELOPMENT.md) | Patterns for page development with App Router |
+| [How-To Guides](docs/guides/) | Step-by-step guides for common development tasks |

@@ -145,6 +145,7 @@ docs/
 | ERD | `docs/ERD.md` | Entity-relationship diagram and model descriptions |
 | Testing | `TESTING.md` | Testing strategy, structure, best practices |
 | Page Development | `PAGE_DEVELOPMENT.md` | Patterns for App Router page development |
+| How-To Guides | `docs/guides/` | Step-by-step guides for common tasks |
 
 ## i18n Usage
 
