@@ -137,6 +137,30 @@ flowchart TD
     pm -->|"TCP/SQL"| postgres
 ```
 
+### Container Diagram (C4 Level 1)
+
+```mermaid
+flowchart TD
+    user["User<br/><i>Team member</i>"]
+
+    subgraph platform ["Project Management Platform"]
+        spa["Single-Page App<br/><i>React 19 + Next.js<br/>App Router</i>"]
+        api["API Route Handlers<br/><i>Next.js serverless<br/>functions</i>"]
+        auth["Auth Module<br/><i>JWT + bcrypt + OTP</i>"]
+        prisma["Data Access Layer<br/><i>Prisma ORM</i>"]
+    end
+
+    gmail["Gmail SMTP<br/><i>External email service</i>"]
+    postgres[("PostgreSQL<br/><i>Primary datastore</i>")]
+
+    user -->|"HTTPS"| spa
+    spa -->|"HTTP/JSON"| api
+    api --> auth
+    api --> prisma
+    auth -->|"SMTP/TLS"| gmail
+    prisma -->|"TCP/SQL"| postgres
+```
+
 ### Layered Architecture
 
 ```mermaid
